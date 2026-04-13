@@ -14,14 +14,6 @@
   --fm:'IBM Plex Mono','Courier New',monospace;
   --fb:'Nunito Sans','Helvetica Neue',sans-serif
 }
-.brand-logo{
-  width:120px;
-  height:auto;
-  margin-bottom:12px;
-  filter:
-    drop-shadow(0 0 25px rgba(240,192,64,.35))
-    drop-shadow(0 0 60px rgba(238,90,111,.25));
-}
 
 html,body{
   height:100%;
@@ -114,6 +106,15 @@ button{cursor:pointer}
 .crown-lg{font-size:64px;margin-bottom:4px;filter:drop-shadow(0 0 30px rgba(240,192,64,.3))}
 .crown-md{font-size:44px;margin-bottom:12px}
 
+.brand-logo{
+  width:120px;
+  height:auto;
+  margin-bottom:12px;
+  filter:
+    drop-shadow(0 0 25px rgba(240,192,64,.35))
+    drop-shadow(0 0 60px rgba(238,90,111,.25));
+}
+
 .lobby-brand{text-align:center;margin-bottom:34px}
 .brand-title{font-family:var(--fd);font-size:44px;color:var(--ac);letter-spacing:6px}
 .brand-subtitle{font-family:var(--fm);color:var(--mt);font-size:10px;letter-spacing:4px;margin-top:4px}
@@ -147,40 +148,49 @@ button{cursor:pointer}
   flex-direction:column;
   overflow:hidden;
   padding:6px 8px 8px;
-  gap:4px
+  gap:5px
 }
 
-/* ALWAYS-VISIBLE LARGE VIDEO RAIL */
+/* VIDEO LAYOUT FIX */
 .top-row{
-  display:flex;
-  align-items:flex-start;
-  gap:6px;
+  display:grid;
+  grid-template-columns:20px minmax(0,1fr) auto auto;
+  align-items:start;
+  gap:8px;
   flex-shrink:0;
-  min-height:134px;
-  max-height:134px;
-  padding-bottom:2px;
+  min-height:122px;
+  max-height:122px;
+  padding-bottom:4px;
   border-bottom:1px solid rgba(255,255,255,.04)
 }
 
 .top-crown{
   font-size:15px;
-  margin-top:12px;
-  flex-shrink:0
+  margin-top:10px;
+  align-self:start
 }
 
 .vid-ctrl-mini{
   flex-shrink:0;
-  margin-top:8px
+  display:flex;
+  align-items:flex-start;
+  margin-top:6px
 }
 
-.cam-btn{padding:4px 10px;font-size:9px}
+.cam-btn{
+  padding:5px 11px;
+  font-size:10px;
+  min-height:34px
+}
 
 .game-conn{
   background:rgba(255,255,255,.03);
   border:1px solid rgba(255,255,255,.06);
-  padding:3px 7px;
+  padding:5px 8px;
   flex-shrink:0;
-  margin-top:8px
+  margin-top:6px;
+  min-height:34px;
+  align-self:start
 }
 
 .info-row{
@@ -325,7 +335,17 @@ button{cursor:pointer}
   justify-content:flex-start;
   overflow:hidden;
   min-height:0;
-  padding-top:0
+  padding-top:0;
+  position:relative
+}
+
+.main-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url("logo.png") center/220px no-repeat;
+  opacity:.04;
+  pointer-events:none;
 }
 
 .main-stage > div:first-child{margin-top:0!important}
@@ -595,7 +615,7 @@ button{cursor:pointer}
   display:inline-block
 }
 
-/* LARGE ALWAYS-VISIBLE VIDEO BOXES */
+/* BIGGER VIDEOS, ALWAYS SHOWN */
 .vid-strip{
   display:flex;
   gap:10px;
@@ -607,8 +627,8 @@ button{cursor:pointer}
 }
 
 .vid-strip .vb{
-  width:110px;
-  height:110px;
+  width:112px;
+  height:112px;
   flex-shrink:0;
   background:#0a0a18;
   border-radius:14px;
@@ -699,4 +719,34 @@ button{cursor:pointer}
   0%{transform:scale(.92)}
   50%{transform:scale(1.06)}
   100%{transform:scale(1)}
+}
+
+/* SMALLER PHONES */
+@media (max-width:420px){
+  .top-row{
+    min-height:118px;
+    max-height:118px;
+    grid-template-columns:18px minmax(0,1fr) auto auto;
+    gap:6px
+  }
+
+  .vid-strip .vb{
+    width:100px;
+    height:100px
+  }
+
+  .vid-strip .vb .vl{
+    max-width:88px;
+    font-size:8px
+  }
+
+  .game-conn{
+    font-size:9px;
+    padding:4px 7px
+  }
+
+  .cam-btn{
+    font-size:9px;
+    padding:4px 9px
+  }
 }

@@ -46,7 +46,8 @@ button{cursor:pointer}
   padding:12px 20px;
   font-size:15px;
   letter-spacing:.4px;
-  transition:transform .12s ease,opacity .2s ease,box-shadow .2s ease
+  transition:transform .12s ease,opacity .2s ease,box-shadow .2s ease;
+  -webkit-tap-highlight-color:transparent
 }
 
 .btn:active{transform:scale(.97)}
@@ -141,7 +142,7 @@ button{cursor:pointer}
 .wait-players-title{font-family:var(--fm);color:var(--ac);font-size:10px;letter-spacing:1px;margin-bottom:8px}
 .wait-note{margin-top:10px}
 
-/* GAME LAYOUT */
+/* GAME */
 .game-screen{
   height:100vh;
   height:100dvh;
@@ -329,16 +330,23 @@ button{cursor:pointer}
   min-height:0;
   overflow:hidden;
   border-radius:20px;
+  height:100%;
 }
 
 #vid-strip{
   position:absolute;
   inset:0;
-  pointer-events:none;
   z-index:1;
+  pointer-events:none;
 }
 
-/* CENTER GAME STAGE */
+#vid-strip.one,
+#vid-strip.two,
+#vid-strip.multi{
+  position:absolute;
+  inset:0;
+}
+
 .main-stage{
   position:relative;
   z-index:2;
@@ -368,20 +376,23 @@ button{cursor:pointer}
   flex-direction:column;
   align-items:center;
 }
+
 .main-stage h3{margin-bottom:4px!important}
 
 /* VIDEO TILES AROUND CARD */
 .vid-strip .vb{
   position:absolute;
-  width:118px;
-  height:118px;
+  width:116px;
+  height:116px;
   background:#0a0a18;
   border-radius:16px;
   overflow:hidden;
   border:1px solid rgba(255,255,255,.06);
   box-shadow:0 0 0 rgba(0,0,0,0);
-  pointer-events:auto
+  pointer-events:auto;
 }
+
+.vid-strip .vb:empty{display:none}
 
 .vid-strip .vb.turn-box{
   border:1px solid rgba(238,90,111,.45);
@@ -424,48 +435,58 @@ button{cursor:pointer}
 
 /* 1 PLAYER */
 .vid-strip.one .vb:nth-child(1){
-  top:10px;
+  top:8px;
   left:50%;
   transform:translateX(-50%);
-  width:142px;
-  height:142px;
+  width:136px;
+  height:136px;
 }
 
 /* 2 PLAYERS */
 .vid-strip.two .vb:nth-child(1){
-  top:12px;
+  top:50%;
   left:0;
-  width:132px;
-  height:132px;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
 }
 
 .vid-strip.two .vb:nth-child(2){
-  top:12px;
+  top:50%;
   right:0;
-  width:132px;
-  height:132px;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
 }
 
 /* 3 PLAYERS */
 .vid-strip.multi .vb:nth-child(1){
-  top:12px;
+  top:14px;
   left:0;
+  width:108px;
+  height:108px;
 }
 
 .vid-strip.multi .vb:nth-child(2){
-  top:12px;
+  top:14px;
   right:0;
+  width:108px;
+  height:108px;
 }
 
 .vid-strip.multi .vb:nth-child(3){
-  bottom:18px;
+  bottom:16px;
   left:0;
+  width:108px;
+  height:108px;
 }
 
 /* 4 PLAYERS */
 .vid-strip.multi .vb:nth-child(4){
-  bottom:18px;
+  bottom:16px;
   right:0;
+  width:108px;
+  height:108px;
 }
 
 .vid-strip .vb:nth-child(n+5){
@@ -641,6 +662,13 @@ button{cursor:pointer}
 #ov-timer{
   justify-content:center;
   padding:20px 16px 22px;
+  background:transparent !important;
+  backdrop-filter:none !important;
+  pointer-events:none;
+}
+
+#ov-timer *{
+  pointer-events:auto;
 }
 
 .timer-icon{
@@ -818,15 +846,23 @@ button{cursor:pointer}
     max-width:118px;
   }
 
-  .vid-strip.two .vb:nth-child(1),
-  .vid-strip.two .vb:nth-child(2){
-    width:122px;
-    height:122px;
+  .vid-strip.one .vb:nth-child(1){
+    width:126px;
+    height:126px;
   }
 
-  .vid-strip.multi .vb{
-    width:108px;
-    height:108px;
+  .vid-strip.two .vb:nth-child(1),
+  .vid-strip.two .vb:nth-child(2){
+    width:114px;
+    height:114px;
+  }
+
+  .vid-strip.multi .vb:nth-child(1),
+  .vid-strip.multi .vb:nth-child(2),
+  .vid-strip.multi .vb:nth-child(3),
+  .vid-strip.multi .vb:nth-child(4){
+    width:98px;
+    height:98px;
   }
 
   .card-w{
@@ -837,4 +873,4 @@ button{cursor:pointer}
   .vid-strip .vb .vl{
     font-size:9px
   }
-  }
+}

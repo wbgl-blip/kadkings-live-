@@ -18,7 +18,6 @@
       camOn: true,
       micOn: true,
       isFS: false,
-      videoPeerMap: {},
       timers: {
         reaction: null,
         round: null,
@@ -29,7 +28,12 @@
   };
 
   const SUITS = ["♠", "♥", "♦", "♣"];
-  const SC = { "♠": "#c8d6e5", "♥": "#ee5a6f", "♦": "#ee5a6f", "♣": "#c8d6e5" };
+  const SC = {
+    "♠": "#c8d6e5",
+    "♥": "#ee5a6f",
+    "♦": "#ee5a6f",
+    "♣": "#c8d6e5"
+  };
   const VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
   const RULES = {
@@ -63,36 +67,18 @@
 
   function bindTap(el, fn) {
     if (!el) return;
-    let touchHandled = false;
-
     el.onclick = (e) => {
-      if (touchHandled) {
-        touchHandled = false;
-        return;
-      }
       e.preventDefault();
       fn(e);
     };
-
     el.ontouchend = (e) => {
-      touchHandled = true;
       e.preventDefault();
       fn(e);
     };
-
     el.onpointerup = (e) => {
-      if (e.pointerType === "touch") return;
       e.preventDefault();
       fn(e);
     };
-  }
-
-  function normalizeKey(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "player";
   }
 
   const UI = {
@@ -150,8 +136,12 @@
   const Game = {
     buildDeck() {
       const deck = [];
-      for (const s of SUITS) for (const v of VALUES) deck.push({ s, v });
-      for (let i = deck.length - 1; i > 0; i--) {
+      for (const s of SUITS) {
+        for (const v of VALUES) {
+          deck.push({ s, v });
+        }
+      }
+      for (let i = deck.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
       }
@@ -160,7 +150,8 @@
 
     createState(players) {
       const drinks = {};
-      players.forEach((name) => drinks[name] = 0);
+      players.forEach((name) => { drinks[name] = 0; });
+
       return {
         players: [...players],
         deck: Game.buildDeck(),
@@ -170,7 +161,11 @@
         drawn: null,
         flip: false,
         over: false,
-        powers: { heaven: null, thumbmaster: null, questionmaster: null },
+        powers: {
+          heaven: null,
+          thumbmaster: null,
+          questionmaster: null
+        },
         rules: [],
         rx: null,
         rxRes: null,
@@ -247,6 +242,7 @@
     resolveReaction() {
       const gs = APP.state.gs;
       if (!gs || !gs.rx) return;
+
       const rx = gs.rx;
       const ranked = gs.players
         .filter((p) => p !== rx.by)
@@ -274,6 +270,7 @@
     async createPeer(id) {
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error("Connection timeout")), 10000);
+
         try {
           const p = new Peer(id, {
             debug: 0,
@@ -324,12 +321,10 @@
       conn.on("data", (raw) => Actions.onData(raw, conn));
       conn.on("close", () => {
         delete APP.state.conns[conn.peer];
-        Video.removeBox(conn.peer);
         Renderer.renderConn();
       });
       conn.on("error", () => {
         delete APP.state.conns[conn.peer];
-        Video.removeBox(conn.peer);
         Renderer.renderConn();
       });
     },
@@ -358,6 +353,7 @@
     setupGuestListeners() {
       const peer = APP.state.peer;
       if (!peer) return;
+
       peer.on("call", (call) => {
         if (APP.state.localStream) call.answer(APP.state.localStream);
         else call.answer();
@@ -367,55 +363,29 @@
   };
 
   const Video = {
-    getDisplayLabel(peerId, fallback = "peer") {
-      if (peerId === "me") return APP.state.me || "you";
-      if (peerId === "kk-" + APP.state.code) return "host";
-
-      const gs = APP.state.gs;
-      if (!gs) return fallback;
-
-      const exact = gs.players.find((name) =>
-        peerId.toLowerCase().includes(normalizeKey(name))
-      );
-      return exact || fallback;
+    getStrip() {
+      return $("vid-strip");
     },
 
-    getBoxKey(label, muted) {
-      if (muted) return "__self__";
-      return normalizeKey(label || "peer");
-    },
-
-    getBoxByKey(key) {
-      return document.querySelector(`.vid-strip .vb[data-box-key="${CSS.escape(key)}"]`);
-    },
-
-    updateStripClass() {
-      const strip = $("vid-strip");
+    updateLayoutClass() {
+      const strip = Video.getStrip();
       if (!strip) return;
 
+      const count = strip.querySelectorAll(".vb").length;
       strip.classList.remove("one", "two", "multi");
 
-      const count = strip.querySelectorAll(".vb").length;
       if (count <= 1) strip.classList.add("one");
       else if (count === 2) strip.classList.add("two");
       else strip.classList.add("multi");
     },
 
-    pruneDuplicateLabels() {
-      const strip = $("vid-strip");
-      if (!strip) return;
-
-      const seen = new Set();
-      [...strip.querySelectorAll(".vb")].forEach((box) => {
-        const key = box.dataset.boxKey || "";
-        if (seen.has(key)) {
-          box.remove();
-          return;
-        }
-        seen.add(key);
-      });
-
-      Video.updateStripClass();
+    mountIntoArena() {
+      const strip = Video.getStrip();
+      const arena = document.querySelector(".arena-wrap");
+      if (!strip || !arena) return;
+      if (strip.parentElement !== arena) {
+        arena.appendChild(strip);
+      }
     },
 
     async start() {
@@ -437,7 +407,7 @@
 
         if (!APP.state.isHost && APP.state.peer) {
           try {
-            const hostId = "kk-" + APP.state.code;
+            const hostId = `kk-${APP.state.code}`;
             const call = APP.state.peer.call(hostId, stream);
             if (call) Video.attachCall(call);
           } catch {}
@@ -454,7 +424,7 @@
       call.on("stream", (stream) => {
         if (gotStream) return;
         gotStream = true;
-        const label = Video.getDisplayLabel(call.peer, "peer");
+        const label = Actions.nameFromPeerId(call.peer);
         Video.addBox(call.peer, stream, false, label);
       });
 
@@ -475,20 +445,15 @@
       else setTimeout(hookPeerConnection, 300);
     },
 
-    addBox(peerId, stream, muted = false, label = "") {
-      const strip = $("vid-strip");
+    addBox(id, stream, muted = false, label = "") {
+      const strip = Video.getStrip();
       if (!strip) return;
 
-      const finalLabel = label || Video.getDisplayLabel(peerId, muted ? APP.state.me : "peer");
-      const key = Video.getBoxKey(finalLabel, muted);
-
-      APP.state.videoPeerMap[peerId] = key;
-
-      let box = Video.getBoxByKey(key);
+      let box = document.getElementById(`v-${CSS.escape(id)}`);
       if (!box) {
         box = document.createElement("div");
+        box.id = `v-${id}`;
         box.className = "vb";
-        box.dataset.boxKey = key;
         box.innerHTML = `
           <video autoplay playsinline ${muted ? "muted" : ""}></video>
           <div class="vl"></div>
@@ -499,41 +464,21 @@
 
       const video = box.querySelector("video");
       if (video.srcObject !== stream) video.srcObject = stream;
-      video.muted = !!muted;
-      video.playsInline = true;
       if (muted) video.style.transform = "scaleX(-1)";
-      else video.style.transform = "";
 
       const labelEl = box.querySelector(".vl");
-      labelEl.textContent = finalLabel;
+      labelEl.textContent = label || (id === "me" ? APP.state.me : "peer");
 
-      Video.pruneDuplicateLabels();
-      Video.refreshTurnBox();
+      Video.updateLayoutClass();
+      Renderer.refreshVideoTurnHighlight();
+      Video.mountIntoArena();
     },
 
-    removeBox(peerId) {
-      const key = APP.state.videoPeerMap[peerId];
-      delete APP.state.videoPeerMap[peerId];
-
-      if (!key) return;
-
-      const stillUsed = Object.values(APP.state.videoPeerMap).includes(key);
-      if (stillUsed) return;
-
-      const box = Video.getBoxByKey(key);
+    removeBox(id) {
+      const box = document.getElementById(`v-${CSS.escape(id)}`);
       if (box) box.remove();
-
-      Video.updateStripClass();
-    },
-
-    refreshTurnBox() {
-      const gs = APP.state.gs;
-      const current = gs?.players?.[gs.turn] ? normalizeKey(gs.players[gs.turn]) : "";
-
-      document.querySelectorAll(".vid-strip .vb").forEach((box) => {
-        const key = box.dataset.boxKey || "";
-        box.classList.toggle("turn-box", !!current && key === current);
-      });
+      Video.updateLayoutClass();
+      Renderer.refreshVideoTurnHighlight();
     },
 
     renderControls(started) {
@@ -553,14 +498,14 @@
 
       bindTap($("b-togc"), () => {
         const tracks = APP.state.localStream?.getVideoTracks() || [];
-        tracks.forEach((t) => t.enabled = !t.enabled);
+        tracks.forEach((t) => { t.enabled = !t.enabled; });
         APP.state.camOn = !APP.state.camOn;
         Video.renderControls(true);
       });
 
       bindTap($("b-togm"), () => {
         const tracks = APP.state.localStream?.getAudioTracks() || [];
-        tracks.forEach((t) => t.enabled = !t.enabled);
+        tracks.forEach((t) => { t.enabled = !t.enabled; });
         APP.state.micOn = !APP.state.micOn;
         Video.renderControls(true);
       });
@@ -570,6 +515,7 @@
   const Actions = {
     run(action) {
       action.t = "act";
+
       if (APP.state.isHost) {
         Actions.apply(action);
         PeerNet.broadcastState();
@@ -613,6 +559,19 @@
       }
     },
 
+    nameFromPeerId(peerId) {
+      const gs = APP.state.gs;
+      if (!gs) return "peer";
+      if (peerId === "me") return APP.state.me;
+      if (peerId === `kk-${APP.state.code}`) return "host";
+
+      const found = gs.players.find((name) =>
+        peerId.includes(name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 4))
+      );
+
+      return found || "peer";
+    },
+
     apply(a) {
       const gs = APP.state.gs;
       if (!gs) return;
@@ -632,7 +591,7 @@
         if (c.v === "6") Game.everyoneDrinks(1);
 
         if (r.t === "king") {
-          gs.kc++;
+          gs.kc += 1;
           if (gs.kc >= 4) {
             gs.over = true;
             gs.phase = "idle";
@@ -753,6 +712,12 @@
   };
 
   const Renderer = {
+    mountArenaVideos() {
+      Video.mountIntoArena();
+      Video.updateLayoutClass();
+      Renderer.refreshVideoTurnHighlight();
+    },
+
     renderAll() {
       Renderer.renderWait();
       Renderer.renderConn();
@@ -784,8 +749,7 @@
       if (!b) return;
 
       b.disabled = false;
-      if (gs.players.length >= 2) b.textContent = "START GAME";
-      else b.textContent = "START SOLO (test)";
+      b.textContent = gs.players.length >= 2 ? "START GAME" : "START SOLO (test)";
     },
 
     renderConn() {
@@ -794,7 +758,7 @@
       const players = gs ? gs.players.length : 0;
 
       const connected = linked > 0 || players > 1;
-      const statusText = connected ? (players > 1 ? players + " players" : linked + " linked") : APP.state.peer ? "waiting" : "offline";
+      const statusText = connected ? `${players > 1 ? players : linked} ${players > 1 ? "players" : "linked"}` : APP.state.peer ? "waiting" : "offline";
       const dotColor = connected ? "#4ade80" : APP.state.peer ? "var(--gd)" : "var(--ac)";
       const html = `<div class="status-dot" style="background:${dotColor}"></div><span style="color:var(--tx)">${statusText}</span>`;
 
@@ -834,7 +798,7 @@
         extra.push(`<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">🤝 ${from}→${to}</span>`);
       });
       gs.rules.forEach((rule) => {
-        extra.push(`<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">📜 ${rule.length > 18 ? rule.slice(0, 18) + "…" : rule}</span>`);
+        extra.push(`<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">📜 ${rule.length > 18 ? `${rule.slice(0, 18)}…` : rule}</span>`);
       });
       UI.setHTML("g-extra", extra.join(""));
 
@@ -849,9 +813,10 @@
         $("g-powers").classList.remove("hidden");
         UI.setHTML("g-pw-list", myPowers.map((pw) => `
           <button class="btn btn-s pw-b" data-k="${pw.k}" style="padding:4px 10px;font-size:9px;white-space:nowrap">
-            <span style="margin-right:3px">${pw.i}</span>${pw.k === "questionmaster" ? "GOTCHA!" : "USE " + pw.l}
+            <span style="margin-right:3px">${pw.i}</span>${pw.k === "questionmaster" ? "GOTCHA!" : `USE ${pw.l}`}
           </button>
         `).join(""));
+
         document.querySelectorAll(".pw-b").forEach((btn) => {
           bindTap(btn, () => {
             const k = btn.dataset.k;
@@ -865,8 +830,7 @@
       }
 
       Renderer.renderMain();
-      Video.updateStripClass();
-      Video.refreshTurnBox();
+      Renderer.refreshVideoTurnHighlight();
     },
 
     renderPlayersGrid() {
@@ -876,6 +840,7 @@
       UI.setHTML("g-players-grid", gs.players.map((p, i) => {
         const isTurn = gs.turn === i;
         const badges = [];
+
         if (gs.powers.heaven === p) badges.push(`<span class="mate-badge">☝️ Heaven</span>`);
         if (gs.powers.thumbmaster === p) badges.push(`<span class="mate-badge">👍 Thumb</span>`);
         if (gs.powers.questionmaster === p) badges.push(`<span class="mate-badge">❓ Questions</span>`);
@@ -899,6 +864,18 @@
       }).join(""));
     },
 
+    refreshVideoTurnHighlight() {
+      const gs = APP.state.gs;
+      const strip = Video.getStrip();
+      if (!gs || !strip) return;
+
+      const current = gs.players[gs.turn]?.toLowerCase() || "";
+      strip.querySelectorAll(".vb").forEach((box) => {
+        const label = box.querySelector(".vl")?.textContent?.toLowerCase() || "";
+        box.classList.toggle("turn-box", !!current && label.includes(current));
+      });
+    },
+
     renderMain() {
       const gs = APP.state.gs;
       const el = $("g-main");
@@ -906,24 +883,29 @@
 
       if (gs.over) {
         const sorted = gs.players.slice().sort((a, b) => (gs.drinks[b] || 0) - (gs.drinks[a] || 0));
+
         el.innerHTML = `
-          <div style="text-align:center;animation:fadeIn .4s">
-            <div style="font-size:50px;margin-bottom:6px">🍺</div>
-            <h2 style="font-family:var(--fd);color:var(--ac);font-size:22px;margin-bottom:8px">GAME OVER</h2>
-            <div style="margin-bottom:12px">
-              ${sorted.map((p, i) => `
-                <div style="display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:8px;margin-bottom:3px;${i===0?'background:rgba(238,90,111,.1);border:1px solid rgba(238,90,111,.2)':''}">
-                  <span style="font-family:var(--fm);color:${i===0?'var(--ac)':'var(--mt)'};font-size:12px;width:20px">#${i+1}</span>
-                  <span style="flex:1;color:var(--tx);font-size:13px">${p}</span>
-                  <span class="drink-badge" style="font-size:10px">🍺 ${gs.drinks[p] || 0}</span>
-                </div>
-              `).join("")}
+          <div class="arena-wrap">
+            <div style="text-align:center;animation:fadeIn .4s;padding-top:48px">
+              <div style="font-size:50px;margin-bottom:6px">🍺</div>
+              <h2 style="font-family:var(--fd);color:var(--ac);font-size:22px;margin-bottom:8px">GAME OVER</h2>
+              <div style="margin-bottom:12px">
+                ${sorted.map((p, i) => `
+                  <div style="display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:8px;margin-bottom:3px;${i===0?'background:rgba(238,90,111,.1);border:1px solid rgba(238,90,111,.2)':''}">
+                    <span style="font-family:var(--fm);color:${i===0?'var(--ac)':'var(--mt)'};font-size:12px;width:20px">#${i+1}</span>
+                    <span style="flex:1;color:var(--tx);font-size:13px">${p}</span>
+                    <span class="drink-badge" style="font-size:10px">🍺 ${gs.drinks[p] || 0}</span>
+                  </div>
+                `).join("")}
+              </div>
+              <p style="color:var(--ac);font-size:13px;margin-bottom:12px">🏆 ${sorted[0]} drank the most!</p>
+              <button class="btn btn-gd" id="b-reset" style="padding:10px 24px;font-size:14px">PLAY AGAIN</button>
             </div>
-            <p style="color:var(--ac);font-size:13px;margin-bottom:12px">🏆 ${sorted[0]} drank the most!</p>
-            <button class="btn btn-gd" id="b-reset" style="padding:10px 24px;font-size:14px">PLAY AGAIN</button>
           </div>
         `;
+
         bindTap($("b-reset"), () => Actions.run({ a: "reset" }));
+        Renderer.mountArenaVideos();
         return;
       }
 
@@ -932,37 +914,39 @@
       const r = gs.drawn ? RULES[gs.drawn.v] : null;
 
       let html = `
-        <div style="font-family:var(--fm);font-size:11px;margin-bottom:6px;color:${meTurn ? 'var(--gd)' : 'var(--mt)'};font-weight:${meTurn ? 700 : 400}">
-          ${meTurn ? "YOUR TURN — tap the card!" : gs.players[gs.turn] + "'s turn"}
-        </div>
+        <div class="arena-wrap">
+          <div style="text-align:center;position:relative;z-index:2">
+            <div style="font-family:var(--fm);font-size:11px;margin-bottom:8px;color:${meTurn?'var(--gd)':'var(--mt)'};font-weight:${meTurn?700:400};text-align:center">
+              ${meTurn ? "YOUR TURN — tap the card!" : `${gs.players[gs.turn]}'s turn`}
+            </div>
 
-        <div class="${gs.flip ? "card-draw-anim" : ""}" style="margin-bottom:8px">
-          <div class="card-w ${gs.phase === "idle" && meTurn ? "draw-enabled" : ""}" id="b-draw">
-            <div class="card-i${gs.flip ? " flipped" : ""}">
-              <div class="card-f card-b">
-                <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:10px;display:flex;align-items:center;justify-content:center">
-                  <span style="font-size:30px;animation:glow 2s ease-in-out infinite">👑</span>
-                </div>
-              </div>
-              <div class="card-f card-fr">
-                <div style="position:absolute;top:5px;left:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1">
-                  <div style="font-size:18px">${c.v}</div>
-                  <div style="font-size:12px">${c.s}</div>
-                </div>
-                <span style="font-size:48px;color:${SC[c.s]}">${c.s}</span>
-                <div style="position:absolute;bottom:5px;right:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1;transform:rotate(180deg)">
-                  <div style="font-size:18px">${c.v}</div>
-                  <div style="font-size:12px">${c.s}</div>
+            <div class="${gs.flip ? "card-draw-anim" : ""}" style="margin-bottom:8px;display:flex;justify-content:center">
+              <div class="card-w ${gs.phase === "idle" && meTurn ? "draw-enabled" : ""}" id="b-draw">
+                <div class="card-i${gs.flip ? " flipped" : ""}">
+                  <div class="card-f card-b">
+                    <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:10px;display:flex;align-items:center;justify-content:center">
+                      <span style="font-size:30px;animation:glow 2s ease-in-out infinite">👑</span>
+                    </div>
+                  </div>
+                  <div class="card-f card-fr">
+                    <div style="position:absolute;top:5px;left:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1">
+                      <div style="font-size:18px">${c.v}</div>
+                      <div style="font-size:12px">${c.s}</div>
+                    </div>
+                    <span style="font-size:48px;color:${SC[c.s]}">${c.s}</span>
+                    <div style="position:absolute;bottom:5px;right:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1;transform:rotate(180deg)">
+                      <div style="font-size:18px">${c.v}</div>
+                      <div style="font-size:12px">${c.s}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
       `;
 
       if (gs.phase === "idle") {
         html += `
-          <div style="display:flex;gap:2px;margin-bottom:4px">
+          <div style="display:flex;gap:2px;margin-bottom:4px;justify-content:center">
             ${Array.from({ length: Math.min(20, Math.ceil(gs.deck.length / 2.6)) }).map((_, i) =>
               `<div style="width:2px;height:8px;border-radius:1px;background:var(--ac);opacity:${0.1 + i * 0.04}"></div>`
             ).join("")}
@@ -972,7 +956,7 @@
 
       if (gs.flip && r && gs.phase === "shown") {
         html += `
-          <div style="background:rgba(238,90,111,.05);border:1px solid rgba(238,90,111,.1);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;animation:fadeIn .3s">
+          <div style="background:rgba(238,90,111,.05);border:1px solid rgba(238,90,111,.1);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;margin:0 auto;animation:fadeIn .3s">
             <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px">
               <span style="font-size:20px">${r.i}</span>
               <h3 style="font-family:var(--fd);color:var(--ac);font-size:15px">${c.v} — ${r.n}</h3>
@@ -987,7 +971,7 @@
 
       if (gs.phase === "rule" && meTurn) {
         html += `
-          <div style="background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.12);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;animation:fadeIn .3s">
+          <div style="background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.12);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;margin:0 auto;animation:fadeIn .3s">
             <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px">
               <span style="font-size:20px">👑</span>
               <h3 style="font-family:var(--fd);color:var(--gd);font-size:15px">MAKE A RULE</h3>
@@ -1028,7 +1012,14 @@
         `;
       }
 
+      html += `
+          </div>
+        </div>
+      `;
+
       el.innerHTML = html;
+
+      Renderer.mountArenaVideos();
 
       const drawBtn = $("b-draw");
       if (drawBtn && gs.phase === "idle" && meTurn) {
@@ -1053,9 +1044,11 @@
       APP.state.timers.waterfall = setInterval(() => {
         const elapsed = (Date.now() - gs.wfStart) / 1000;
         const rem = Math.max(0, gs.wfDuration - elapsed);
-        if ($("wf-clock")) $("wf-clock").textContent = rem.toFixed(1) + "s";
-        if ($("wf-bar")) $("wf-bar").style.width = (rem / gs.wfDuration * 100) + "%";
+
+        if ($("wf-clock")) $("wf-clock").textContent = `${rem.toFixed(1)}s`;
+        if ($("wf-bar")) $("wf-bar").style.width = `${(rem / gs.wfDuration) * 100}%`;
         if ($("wf-clock")) $("wf-clock").style.color = rem <= 3 ? "var(--ac)" : "var(--gd)";
+
         if (rem <= 0) {
           clearInterval(APP.state.timers.waterfall);
           Actions.run({ a: "wfdone" });
@@ -1095,7 +1088,7 @@
         const rem = Math.max(0, APP.config.ROUND_TIME - elapsed);
 
         UI.setText("tm-clock", Math.ceil(rem));
-        $("tm-bar").style.width = (rem / APP.config.ROUND_TIME * 100) + "%";
+        $("tm-bar").style.width = `${(rem / APP.config.ROUND_TIME) * 100}%`;
         $("tm-clock").style.color = rem <= 5 ? "var(--ac)" : "var(--gd)";
 
         if (rem <= 0) clearInterval(APP.state.timers.round);
@@ -1141,7 +1134,7 @@
           <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:10px;background:${last ? "rgba(238,90,111,.1)" : "rgba(255,255,255,.02)"};border:1px solid ${last ? "var(--ac)" : "transparent"}">
             <span style="font-family:var(--fm);color:${i===0 ? "var(--gd)" : "var(--mt)"};font-weight:700;width:24px">#${i+1}</span>
             <span style="flex:1;color:${last ? "var(--ac)" : "var(--tx)"};font-weight:600;font-size:14px">${x.p}</span>
-            <span style="font-family:var(--fm);color:var(--mt);font-size:11px">${x.t !== null ? (x.t / 1000).toFixed(2) + "s" : "TIMEOUT"}</span>
+            <span style="font-family:var(--fm);color:var(--mt);font-size:11px">${x.t !== null ? `${(x.t / 1000).toFixed(2)}s` : "TIMEOUT"}</span>
           </div>
         `;
       }).join(""));
@@ -1161,7 +1154,7 @@
         $("ov-react").classList.remove("hidden");
         UI.setText("r-icon", gs.rx.t === "heaven" ? "☝️" : "👍");
         UI.setText("r-title", gs.rx.t === "heaven" ? "HEAVEN!" : "THUMBMASTER!");
-        UI.setText("r-by", "by " + gs.rx.by);
+        UI.setText("r-by", `by ${gs.rx.by}`);
 
         const tapped = gs.rx.taps[APP.state.me];
         $("r-tap-area").classList.toggle("hidden", !!tapped || APP.state.me === gs.rx.by);
@@ -1171,8 +1164,8 @@
 
         APP.state.timers.reaction = setInterval(() => {
           const rem = Math.max(0, APP.config.REACTION_TIME - (Date.now() - gs.rx.st));
-          $("r-bar").style.width = (rem / APP.config.REACTION_TIME * 100) + "%";
-          UI.setText("r-time", (rem / 1000).toFixed(1) + "s");
+          $("r-bar").style.width = `${(rem / APP.config.REACTION_TIME) * 100}%`;
+          UI.setText("r-time", `${(rem / 1000).toFixed(1)}s`);
           if (rem <= 0) clearInterval(APP.state.timers.reaction);
         }, 50);
       } else {
@@ -1212,7 +1205,7 @@
       }
 
       try {
-        APP.state.peer = await PeerNet.createPeer("kk-" + APP.state.code);
+        APP.state.peer = await PeerNet.createPeer(`kk-${APP.state.code}`);
         APP.state.gs = Game.createState([name]);
         PeerNet.setupHost();
         UI.setHTML("lobby-status", "");
@@ -1241,10 +1234,10 @@
       UI.setHTML("lobby-status", `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`);
 
       try {
-        const safeName = normalizeKey(name).slice(0, 8) || "plyr";
-        APP.state.peer = await PeerNet.createPeer(`kk-${code}-${safeName}-${Math.random().toString(36).slice(2, 5)}`);
+        const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 4) || "plyr";
+        APP.state.peer = await PeerNet.createPeer(`kk-${code}-${safeName}-${Math.random().toString(36).slice(2,5)}`);
 
-        const conn = APP.state.peer.connect("kk-" + code, { reliable: true });
+        const conn = APP.state.peer.connect(`kk-${code}`, { reliable: true });
         APP.state.conns[conn.peer] = conn;
         PeerNet.attachConnection(conn);
 

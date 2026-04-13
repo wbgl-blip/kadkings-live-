@@ -151,15 +151,15 @@ button{cursor:pointer}
   gap:6px
 }
 
-/* VIDEO ZONE */
+/* TOP VIDEO ZONE */
 .top-row{
   display:grid;
   grid-template-columns:22px minmax(0,1fr) auto auto;
   align-items:start;
   gap:8px;
   width:100%;
-  min-height:220px;
-  max-height:220px;
+  min-height:190px;
+  max-height:190px;
   padding-bottom:6px;
   border-bottom:1px solid rgba(255,255,255,.05)
 }
@@ -212,6 +212,11 @@ button{cursor:pointer}
 .vid-strip.two{
   grid-template-columns:1fr 1fr;
   grid-template-rows:1fr;
+}
+
+.vid-strip.two .vb{
+  min-height:170px;
+  max-height:170px;
 }
 
 .vid-strip.multi{
@@ -332,20 +337,20 @@ button{cursor:pointer}
   overflow-x:auto;
   flex-shrink:0;
   padding:2px 0 0;
-  max-height:82px
+  max-height:70px
 }
 
 .player-tile{
-  min-width:118px;
-  max-width:132px;
+  min-width:112px;
+  max-width:126px;
   border-radius:14px;
-  padding:7px 8px;
+  padding:6px 7px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
-  gap:4px
+  justify-content:center;
+  gap:3px
 }
 
 .player-tile.turn{
@@ -360,9 +365,9 @@ button{cursor:pointer}
 
 .player-name{
   color:var(--tx);
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
-  line-height:1.2;
+  line-height:1.1;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
@@ -415,7 +420,7 @@ button{cursor:pointer}
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  padding-top:4px
+  padding-top:0
 }
 
 .main-stage::before{
@@ -450,14 +455,20 @@ button{cursor:pointer}
 
 .powers-wrap{
   display:flex;
-  gap:3px;
+  gap:4px;
   flex-shrink:0;
   overflow-x:auto;
-  padding-top:2px;
-  margin-top:-2px
+  padding-top:0;
+  margin-top:0
 }
 
-.powers-list{display:flex;gap:3px}
+.powers-list{display:flex;gap:4px}
+
+.powers-list .btn{
+  padding:6px 10px !important;
+  font-size:10px !important;
+  border-radius:999px;
+}
 
 .card-w{
   perspective:1000px;
@@ -748,8 +759,8 @@ button{cursor:pointer}
 
 @media (max-width:420px){
   .top-row{
-    min-height:200px;
-    max-height:200px;
+    min-height:176px;
+    max-height:176px;
     grid-template-columns:18px minmax(0,1fr) auto auto;
     gap:6px
   }
@@ -762,6 +773,25 @@ button{cursor:pointer}
   .cam-btn{
     font-size:9px;
     padding:4px 9px
+  }
+
+  .vid-strip.two .vb{
+    min-height:156px;
+    max-height:156px;
+  }
+
+  .players-strip{
+    max-height:66px;
+  }
+
+  .player-tile{
+    min-width:108px;
+    max-width:122px;
+    padding:6px 7px;
+  }
+
+  .player-name{
+    font-size:12px;
   }
 
   .vid-strip .vb .vl{

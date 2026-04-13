@@ -142,17 +142,22 @@ button{cursor:pointer}
   gap:4px
 }
 
+/* ALWAYS-VISIBLE LARGE VIDEO RAIL */
 .top-row{
   display:flex;
   align-items:flex-start;
   gap:6px;
   flex-shrink:0;
-  min-height:112px
+  min-height:134px;
+  max-height:134px;
+  padding-bottom:2px;
+  border-bottom:1px solid rgba(255,255,255,.04)
 }
 
 .top-crown{
   font-size:15px;
-  margin-top:12px
+  margin-top:12px;
+  flex-shrink:0
 }
 
 .vid-ctrl-mini{
@@ -352,9 +357,7 @@ button{cursor:pointer}
   user-select:none
 }
 
-.card-w.draw-enabled{
-  cursor:pointer
-}
+.card-w.draw-enabled{cursor:pointer}
 
 .card-i{
   width:100%;
@@ -584,25 +587,26 @@ button{cursor:pointer}
   display:inline-block
 }
 
+/* LARGE ALWAYS-VISIBLE VIDEO BOXES */
 .vid-strip{
   display:flex;
-  gap:8px;
+  gap:10px;
   overflow-x:auto;
-  padding:2px 0;
+  padding:0;
   flex:1;
-  min-width:0
+  min-width:0;
+  align-items:flex-start
 }
 
-/* FIXED SQUARE VIDEO */
 .vid-strip .vb{
-  width:96px;
-  height:96px;
+  width:110px;
+  height:110px;
   flex-shrink:0;
   background:#0a0a18;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
   position:relative;
-  border:1px solid rgba(255,255,255,.05)
+  border:1px solid rgba(255,255,255,.06)
 }
 
 .vid-strip .vb.turn-box{
@@ -619,15 +623,15 @@ button{cursor:pointer}
 
 .vid-strip .vb .vl{
   position:absolute;
-  bottom:3px;
-  left:3px;
-  background:rgba(0,0,0,.66);
+  bottom:4px;
+  left:4px;
+  background:rgba(0,0,0,.68);
   border-radius:4px;
-  padding:1px 5px;
-  font-size:8px;
+  padding:2px 6px;
+  font-size:9px;
   font-family:var(--fm);
   color:#fff;
-  max-width:86px;
+  max-width:98px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
@@ -635,10 +639,10 @@ button{cursor:pointer}
 
 .vid-strip .vb .vd{
   position:absolute;
-  top:4px;
-  right:4px;
-  width:7px;
-  height:7px;
+  top:6px;
+  right:6px;
+  width:9px;
+  height:9px;
   border-radius:50%;
   background:var(--ok)
 }

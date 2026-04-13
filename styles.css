@@ -1,4 +1,5 @@
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
   --bg:#06060e;
   --sf:rgba(12,12,24,0.94);
@@ -14,6 +15,7 @@
   --fm:'IBM Plex Mono','Courier New',monospace;
   --fb:'Nunito Sans','Helvetica Neue',sans-serif
 }
+
 html,body{
   height:100%;
   background:
@@ -24,10 +26,24 @@ html,body{
   font-family:var(--fb);
   overflow:hidden
 }
-body{overscroll-behavior:none;position:relative}
-button,input,textarea{font-family:var(--fb)}
-button{cursor:pointer}
-.hidden{display:none!important}
+
+body{
+  overscroll-behavior:none;
+  position:relative
+}
+
+button,input,textarea{
+  font-family:var(--fb)
+}
+
+button{
+  cursor:pointer
+}
+
+.hidden{
+  display:none!important
+}
+
 .panel{
   background:var(--sf);
   border-radius:16px;
@@ -35,6 +51,7 @@ button{cursor:pointer}
   border:1px solid var(--br);
   box-shadow:0 10px 30px rgba(0,0,0,.25)
 }
+
 .btn{
   border:none;
   border-radius:12px;
@@ -44,18 +61,28 @@ button{cursor:pointer}
   letter-spacing:.4px;
   transition:transform .12s ease,opacity .2s ease,box-shadow .2s ease
 }
-.btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.btn:active{
+  transform:scale(.97)
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed
+}
+
 .btn-ac{
   background:linear-gradient(135deg,var(--ac),#c23152);
   color:#fff;
   box-shadow:0 4px 16px rgba(238,90,111,.25)
 }
+
 .btn-gd{
   background:linear-gradient(135deg,var(--gd),#d4a020);
   color:#1a1a2e;
   box-shadow:0 4px 16px rgba(240,192,64,.22)
 }
+
 .btn-s{
   background:var(--acd);
   color:var(--ac);
@@ -63,11 +90,13 @@ button{cursor:pointer}
   padding:9px 14px;
   font-size:12px
 }
+
 .btn-dark{
   background:rgba(255,255,255,.04);
   color:var(--tx);
   border:1px solid rgba(255,255,255,.08)
 }
+
 .inp,.ta{
   width:100%;
   padding:13px 15px;
@@ -78,8 +107,16 @@ button{cursor:pointer}
   font-size:16px;
   outline:none
 }
-.ta{min-height:88px;resize:none}
-.inp:focus,.ta:focus{border-color:rgba(238,90,111,.35)}
+
+.ta{
+  min-height:88px;
+  resize:none
+}
+
+.inp:focus,.ta:focus{
+  border-color:rgba(238,90,111,.35)
+}
+
 .screen{
   min-height:100vh;
   min-height:100dvh;
@@ -89,10 +126,31 @@ button{cursor:pointer}
   justify-content:center;
   padding:18px
 }
-.float{animation:float 3s ease-in-out infinite}
-.card-w{perspective:1000px;display:inline-block;cursor:pointer;width:132px;height:184px}
-.card-i{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.25,1.5,.5,1)}
-.card-i.flipped{transform:rotateY(180deg)}
+
+.float{
+  animation:float 3s ease-in-out infinite
+}
+
+.card-w{
+  perspective:1000px;
+  display:inline-block;
+  cursor:pointer;
+  width:132px;
+  height:184px
+}
+
+.card-i{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.25,1.5,.5,1)
+}
+
+.card-i.flipped{
+  transform:rotateY(180deg)
+}
+
 .card-f{
   position:absolute;
   width:100%;
@@ -105,17 +163,20 @@ button{cursor:pointer}
   justify-content:center;
   overflow:hidden
 }
+
 .card-b{
   background:linear-gradient(145deg,#0e0e1e,#1a1a35);
   border:2.5px solid var(--ac);
   box-shadow:0 8px 32px rgba(238,90,111,.25),0 0 60px rgba(238,90,111,.08)
 }
+
 .card-fr{
   transform:rotateY(180deg);
   background:linear-gradient(145deg,#fdf8ee,#f5eed8);
   border:2.5px solid #c8c0a8;
   box-shadow:0 8px 32px rgba(0,0,0,.3)
 }
+
 .ov{
   position:fixed;
   inset:0;
@@ -128,6 +189,7 @@ button{cursor:pointer}
   animation:fadeIn .18s ease;
   padding:16px
 }
+
 .status-bar{
   display:flex;
   align-items:center;
@@ -137,7 +199,13 @@ button{cursor:pointer}
   font-family:var(--fm);
   font-size:10px
 }
-.status-dot{width:7px;height:7px;border-radius:50%}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%
+}
+
 .drink-badge{
   display:inline-flex;
   align-items:center;
@@ -150,6 +218,7 @@ button{cursor:pointer}
   font-size:8px;
   color:var(--ac)
 }
+
 .mate-badge{
   display:inline-flex;
   align-items:center;
@@ -162,6 +231,7 @@ button{cursor:pointer}
   font-size:8px;
   color:var(--gd)
 }
+
 .chip{
   display:inline-flex;
   align-items:center;
@@ -174,20 +244,24 @@ button{cursor:pointer}
   font-size:9px;
   white-space:nowrap
 }
+
 .spinner{
-  width:20px;height:20px;
+  width:20px;
+  height:20px;
   border:2px solid rgba(255,255,255,.12);
   border-top-color:var(--ac);
   border-radius:50%;
   animation:spin .7s linear infinite;
   display:inline-block
 }
+
 .vid-strip{
   display:flex;
   gap:6px;
   overflow-x:auto;
   padding:2px 0
 }
+
 .vid-strip .vb{
   width:78px;
   height:58px;
@@ -198,7 +272,13 @@ button{cursor:pointer}
   position:relative;
   border:1px solid rgba(255,255,255,.05)
 }
-.vid-strip .vb video{width:100%;height:100%;object-fit:cover}
+
+.vid-strip .vb video{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
 .vid-strip .vb .vl{
   position:absolute;
   bottom:2px;
@@ -214,6 +294,7 @@ button{cursor:pointer}
   text-overflow:ellipsis;
   white-space:nowrap
 }
+
 .vid-strip .vb .vd{
   position:absolute;
   top:2px;
@@ -223,7 +304,11 @@ button{cursor:pointer}
   border-radius:50%;
   background:var(--ok)
 }
-.turn-pulse{animation:turnPulse 1.4s ease-in-out infinite}
+
+.turn-pulse{
+  animation:turnPulse 1.4s ease-in-out infinite
+}
+
 .you-drink{
   position:fixed;
   inset:0;
@@ -234,6 +319,7 @@ button{cursor:pointer}
   pointer-events:none;
   animation:fadeIn .15s ease
 }
+
 .you-drink .yd-inner{
   font-family:var(--fd);
   font-size:36px;
@@ -242,28 +328,74 @@ button{cursor:pointer}
   text-align:center;
   text-shadow:0 0 30px rgba(238,90,111,.45)
 }
-.small-note{font-family:var(--fm);font-size:10px;color:var(--mt)}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:rgba(238,90,111,.25);border-radius:3px}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 40px rgba(238,90,111,.4)}50%{box-shadow:0 0 80px rgba(238,90,111,.7)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(240,192,64,.3))}50%{filter:drop-shadow(0 0 20px rgba(240,192,64,.6))}}
-@keyframes cardDraw{0%{transform:scale(.85) rotateZ(-3deg);opacity:.7}100%{transform:scale(1) rotateZ(0);opacity:1}}
-@keyframes turnPulse{0%,100%{box-shadow:0 0 0 rgba(238,90,111,0)}50%{box-shadow:0 0 20px rgba(238,90,111,.18)}}
+
+.small-note{
+  font-family:var(--fm);
+  font-size:10px;
+  color:var(--mt)
+}
+
+::-webkit-scrollbar{
+  width:3px;
+  height:3px
+}
+
+::-webkit-scrollbar-thumb{
+  background:rgba(238,90,111,.25);
+  border-radius:3px
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 40px rgba(238,90,111,.4)}
+  50%{box-shadow:0 0 80px rgba(238,90,111,.7)}
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+@keyframes glow{
+  0%,100%{filter:drop-shadow(0 0 8px rgba(240,192,64,.3))}
+  50%{filter:drop-shadow(0 0 20px rgba(240,192,64,.6))}
+}
+
+@keyframes cardDraw{
+  0%{transform:scale(.85) rotateZ(-3deg);opacity:.7}
+  100%{transform:scale(1) rotateZ(0);opacity:1}
+}
+
+@keyframes turnPulse{
+  0%,100%{box-shadow:0 0 0 rgba(238,90,111,0)}
+  50%{box-shadow:0 0 20px rgba(238,90,111,.18)}
+}
+
 @keyframes splashZoom{
   0%{transform:scale(.84);opacity:0}
   22%{opacity:1}
   100%{transform:scale(1);opacity:1}
 }
+
 @keyframes splashGlow{
   0%,100%{filter:drop-shadow(0 0 12px rgba(240,192,64,.14)) drop-shadow(0 0 24px rgba(238,90,111,.10))}
   50%{filter:drop-shadow(0 0 18px rgba(240,192,64,.28)) drop-shadow(0 0 36px rgba(238,90,111,.22))}
 }
-.card-draw-anim{animation:cardDraw .3s ease-out}
+
+.card-draw-anim{
+  animation:cardDraw .3s ease-out
+}
 
 /* ===== SPLASH ===== */
+
 #s-splash{
   position:fixed;
   inset:0;
@@ -277,7 +409,11 @@ button{cursor:pointer}
     radial-gradient(circle at center, rgba(240,192,64,.08), transparent 38%),
     linear-gradient(180deg,#04040a,#06060e 60%,#090914)
 }
-#s-splash.hidden{display:none!important}
+
+#s-splash.hidden{
+  display:none!important
+}
+
 .splash-logo-wrap{
   width:min(84vw,430px);
   display:flex;
@@ -286,12 +422,14 @@ button{cursor:pointer}
   margin-bottom:18px;
   animation:splashZoom 1.25s cubic-bezier(.2,.9,.2,1) forwards,splashGlow 1.9s ease-in-out infinite
 }
+
 .splash-logo{
   width:100%;
   height:auto;
   display:block;
   object-fit:contain
 }
+
 .splash-fallback{
   font-family:var(--fd);
   font-size:42px;
@@ -299,6 +437,7 @@ button{cursor:pointer}
   letter-spacing:5px;
   text-align:center
 }
+
 .splash-sub{
   font-family:var(--fm);
   font-size:11px;
@@ -307,12 +446,14 @@ button{cursor:pointer}
 }
 
 /* ===== LOBBY BRANDING ===== */
+
 .lobby-stage{
   position:fixed;
   inset:0;
   z-index:0;
   overflow:hidden
 }
+
 .lobby-bg{
   position:absolute;
   inset:0;
@@ -321,6 +462,7 @@ button{cursor:pointer}
     radial-gradient(circle at bottom, rgba(240,192,64,.08), transparent 38%),
     linear-gradient(180deg,#070710,#05050c 60%,#080810)
 }
+
 .lobby-logo-bg{
   position:absolute;
   inset:0;
@@ -329,6 +471,7 @@ button{cursor:pointer}
   filter:blur(.5px) saturate(1.05);
   pointer-events:none
 }
+
 .lobby-vignette{
   position:absolute;
   inset:0;
@@ -336,6 +479,7 @@ button{cursor:pointer}
     linear-gradient(180deg,rgba(0,0,0,.30),rgba(0,0,0,.50)),
     radial-gradient(circle at center, rgba(0,0,0,.05), rgba(0,0,0,.55) 75%)
 }
+
 .brand-hero{
   width:100%;
   max-width:360px;
@@ -343,6 +487,7 @@ button{cursor:pointer}
   justify-content:center;
   margin-bottom:18px
 }
+
 .brand-logo{
   width:100%;
   max-width:300px;
@@ -351,15 +496,18 @@ button{cursor:pointer}
   object-fit:contain;
   filter:drop-shadow(0 0 18px rgba(238,90,111,.24)) drop-shadow(0 0 26px rgba(240,192,64,.12))
 }
+
 .brand-logo-fallback{
   text-align:center
 }
+
 .brand-logo-fallback h1{
   font-family:var(--fd);
   font-size:44px;
   color:var(--ac);
   letter-spacing:6px
 }
+
 .brand-logo-fallback p{
   font-family:var(--fm);
   color:var(--mt);
@@ -367,12 +515,14 @@ button{cursor:pointer}
   letter-spacing:4px;
   margin-top:4px
 }
+
 .wait-brand{
   width:100%;
   display:flex;
   justify-content:center;
   margin-bottom:10px
 }
+
 .wait-brand img{
   width:min(62vw,240px);
   max-height:100px;

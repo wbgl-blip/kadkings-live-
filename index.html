@@ -12,8 +12,7 @@
   <div id="s-lobby" class="screen">
     <div class="lobby-brand">
       <img src="logo.png" class="brand-logo float" alt="KAD Kings logo">
-
-<h1 class="brand-title">KAD KINGS</h1>
+      <h1 class="brand-title">KAD KINGS</h1>
       <p class="brand-subtitle">THE DRINKING CARD GAME</p>
     </div>
 
@@ -62,29 +61,29 @@
   </div>
 
   <div id="s-game" class="hidden game-screen">
-    <div class="top-row">
+    <div class="hud-top-row">
       <span class="top-crown">👑</span>
-      <div id="vid-strip" class="vid-strip"></div>
+      <div id="g-conn" class="status-bar game-conn"></div>
       <div id="vid-ctrl-mini" class="vid-ctrl-mini">
         <button id="b-cam" class="btn btn-s cam-btn">📹</button>
       </div>
-      <div id="g-conn" class="status-bar game-conn"></div>
+      <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
     </div>
 
     <div id="g-info" class="info-row">
       <span id="g-deck" class="chip"></span>
       <span id="g-kings" class="chip"></span>
       <div id="g-scores" class="score-strip"></div>
-      <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
     </div>
 
     <div id="g-power-bar" class="power-bar hidden"></div>
     <div id="g-extra" class="extra-row"></div>
-
-    <!-- MOVED UP -->
     <div id="g-players-grid" class="players-strip"></div>
 
-    <div id="g-main" class="main-stage"></div>
+    <div class="arena-wrap">
+      <div id="vid-strip" class="vid-strip"></div>
+      <div id="g-main" class="main-stage"></div>
+    </div>
 
     <div id="g-powers" class="powers-wrap hidden">
       <div id="g-pw-list" class="powers-list"></div>

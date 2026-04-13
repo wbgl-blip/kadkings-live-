@@ -4,7 +4,8 @@
   const APP = {
     config: {
       REACTION_TIME: 6000,
-      ROUND_TIME: 30
+      ROUND_TIME: 30,
+      DEV: false
     },
     state: {
       me: "",
@@ -55,10 +56,26 @@
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun.relay.metered.ca:80" },
-      { urls: "turn:global.relay.metered.ca:80", username: "e8dd65b92f94db5be7e30c2e", credential: "uLRhMHOkzmL+Cmhj" },
-      { urls: "turn:global.relay.metered.ca:80?transport=tcp", username: "e8dd65b92f94db5be7e30c2e", credential: "uLRhMHOkzmL+Cmhj" },
-      { urls: "turn:global.relay.metered.ca:443", username: "e8dd65b92f94db5be7e30c2e", credential: "uLRhMHOkzmL+Cmhj" },
-      { urls: "turns:global.relay.metered.ca:443?transport=tcp", username: "e8dd65b92f94db5be7e30c2e", credential: "uLRhMHOkzmL+Cmhj" }
+      {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "e8dd65b92f94db5be7e30c2e",
+        credential: "uLRhMHOkzmL+Cmhj"
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "e8dd65b92f94db5be7e30c2e",
+        credential: "uLRhMHOkzmL+Cmhj"
+      },
+      {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "e8dd65b92f94db5be7e30c2e",
+        credential: "uLRhMHOkzmL+Cmhj"
+      },
+      {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "e8dd65b92f94db5be7e30c2e",
+        credential: "uLRhMHOkzmL+Cmhj"
+      }
     ]
   };
 
@@ -67,27 +84,19 @@
   function bindTap(el, fn) {
     if (!el) return;
 
+    const handler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      fn(e);
+    };
+
     el.onclick = null;
     el.ontouchend = null;
     el.onpointerup = null;
 
-    el.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      fn(e);
-    };
-
-    el.ontouchend = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      fn(e);
-    };
-
-    el.onpointerup = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      fn(e);
-    };
+    el.onclick = handler;
+    el.ontouchend = handler;
+    el.onpointerup = handler;
   }
 
   const UI = {
@@ -208,22 +217,21 @@
       const gs = APP.state.gs;
       if (!gs) return;
       gs.hist.unshift(entry);
-      if (gs.hist.length > 30) gs.hist.length = 30;
+      if (gs.hist.length > 24) gs.hist.length = 24;
     },
 
     normalizeMates() {
       const gs = APP.state.gs;
       if (!gs) return;
 
-      gs.mates = gs.mates.filter(
-        (pair) =>
-          Array.isArray(pair) &&
-          pair.length === 2 &&
-          pair[0] &&
-          pair[1] &&
-          pair[0] !== pair[1] &&
-          gs.players.includes(pair[0]) &&
-          gs.players.includes(pair[1])
+      gs.mates = gs.mates.filter((pair) =>
+        Array.isArray(pair) &&
+        pair.length === 2 &&
+        pair[0] &&
+        pair[1] &&
+        pair[0] !== pair[1] &&
+        gs.players.includes(pair[0]) &&
+        gs.players.includes(pair[1])
       );
     },
 
@@ -408,20 +416,6 @@
       return $("vid-strip");
     },
 
-    getArena() {
-      return document.querySelector(".arena-wrap");
-    },
-
-    ensureStripExists() {
-      let strip = Video.getStrip();
-      if (strip) return strip;
-
-      strip = document.createElement("div");
-      strip.id = "vid-strip";
-      strip.className = "vid-strip";
-      return strip;
-    },
-
     updateLayoutClass() {
       const strip = Video.getStrip();
       if (!strip) return;
@@ -436,19 +430,21 @@
     },
 
     mountIntoArena() {
-      const arena = Video.getArena();
-      if (!arena) return;
-
-      const strip = Video.ensureStripExists();
-
+      const strip = Video.getStrip();
+      const arena = document.querySelector(".arena-wrap");
+      if (!strip || !arena) return;
       if (strip.parentElement !== arena) {
         arena.appendChild(strip);
       }
-
-      Video.updateLayoutClass();
     },
 
     async start() {
+      if (APP.state.localStream) {
+        Video.addBox("me", APP.state.localStream, true, APP.state.me);
+        Video.renderControls(true);
+        return;
+      }
+
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -512,12 +508,15 @@
     },
 
     addBox(id, stream, muted = false, label = "") {
-      const strip = Video.ensureStripExists();
-      let box = document.getElementById(`v-${CSS.escape(id)}`);
+      const strip = Video.getStrip();
+      if (!strip) return;
+
+      const domId = `v-${id}`;
+      let box = document.getElementById(domId);
 
       if (!box) {
         box = document.createElement("div");
-        box.id = `v-${id}`;
+        box.id = domId;
         box.className = "vb";
         box.innerHTML = `
           <video autoplay playsinline ${muted ? "muted" : ""}></video>
@@ -528,24 +527,19 @@
       }
 
       const video = box.querySelector("video");
-      if (video.srcObject !== stream) {
-        video.srcObject = stream;
-      }
-
-      if (muted) {
-        video.muted = true;
-        video.style.transform = "scaleX(-1)";
-      }
+      if (video.srcObject !== stream) video.srcObject = stream;
+      if (muted) video.style.transform = "scaleX(-1)";
 
       const labelEl = box.querySelector(".vl");
       labelEl.textContent = label || (id === "me" ? APP.state.me : "peer");
 
-      Video.mountIntoArena();
+      Video.updateLayoutClass();
       Renderer.refreshVideoTurnHighlight();
+      Video.mountIntoArena();
     },
 
     removeBox(id) {
-      const box = document.getElementById(`v-${CSS.escape(id)}`);
+      const box = document.getElementById(`v-${id}`);
       if (box) box.remove();
       Video.updateLayoutClass();
       Renderer.refreshVideoTurnHighlight();
@@ -562,8 +556,8 @@
       }
 
       el.innerHTML = `
-        <button id="b-togc" class="btn btn-s" style="padding:10px 12px;font-size:12px;${APP.state.camOn ? "color:#4ade80" : "color:#666"}">${APP.state.camOn ? "📹" : "🚫"}</button>
-        <button id="b-togm" class="btn btn-s" style="padding:10px 12px;font-size:12px;${APP.state.micOn ? "color:#4ade80" : "color:#666"}">${APP.state.micOn ? "🎤" : "🔇"}</button>
+        <button id="b-togc" class="btn btn-s" style="padding:3px 6px;font-size:8px;${APP.state.camOn ? "color:#4ade80" : "color:#666"}">${APP.state.camOn ? "📹" : "🚫"}</button>
+        <button id="b-togm" class="btn btn-s" style="padding:3px 6px;font-size:8px;${APP.state.micOn ? "color:#4ade80" : "color:#666"}">${APP.state.micOn ? "🎤" : "🔇"}</button>
       `;
 
       bindTap($("b-togc"), () => {
@@ -788,6 +782,7 @@
   const Renderer = {
     mountArenaVideos() {
       Video.mountIntoArena();
+      Video.updateLayoutClass();
       Renderer.refreshVideoTurnHighlight();
     },
 
@@ -812,18 +807,11 @@
       const gs = APP.state.gs;
       if (!gs) return;
 
-      UI.setHTML(
-        "w-players",
-        gs.players
-          .map(
-            (p) => `
-        <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:14px">
-          ${p}${p === APP.state.me ? ' <span style="color:var(--mt);font-size:10px">(you)</span>' : ""}
+      UI.setHTML("w-players", gs.players.map((p) => `
+        <div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px">
+          ${p}${p === APP.state.me ? ' <span style="color:var(--mt);font-size:9px">(you)</span>' : ""}
         </div>
-      `
-          )
-          .join("")
-      );
+      `).join(""));
 
       const b = $("b-start");
       if (!b) return;
@@ -839,18 +827,13 @@
       const connected = linked > 0 || players > 1;
       const statusText = connected
         ? `${players > 1 ? players : linked} ${players > 1 ? "players" : "linked"}`
-        : APP.state.peer
-          ? "waiting"
-          : "offline";
+        : APP.state.peer ? "waiting" : "offline";
 
       const dotColor = connected ? "#4ade80" : APP.state.peer ? "var(--gd)" : "var(--ac)";
       const html = `<div class="status-dot" style="background:${dotColor}"></div><span style="color:var(--tx)">${statusText}</span>`;
 
       UI.setHTML("g-conn", html);
-      UI.setHTML(
-        "w-status",
-        `<div class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">${html}</div>`
-      );
+      UI.setHTML("w-status", `<div class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:4px 10px">${html}</div>`);
     },
 
     renderGame() {
@@ -860,19 +843,12 @@
       UI.setText("g-deck", `${gs.deck.length} left`);
       UI.setText("g-kings", `👑 ${gs.kc}/4`);
 
-      UI.setHTML(
-        "g-scores",
-        gs.players
-          .map(
-            (p, i) => `
-        <div style="display:flex;align-items:center;gap:4px;padding:8px 10px;border-radius:999px;background:${i === gs.turn ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.04)"};border:1px solid ${i === gs.turn ? "rgba(238,90,111,.18)" : "rgba(255,255,255,.06)"};flex-shrink:0" class="${i === gs.turn ? "turn-pulse" : ""}">
-          <span style="font-size:11px;color:var(--tx)">${p.slice(0, 6)}</span>
-          <span style="font-family:var(--fm);font-size:11px;color:var(--ac)">🍺${gs.drinks[p] || 0}</span>
+      UI.setHTML("g-scores", gs.players.map((p, i) => `
+        <div style="display:flex;align-items:center;gap:2px;padding:2px 6px;border-radius:6px;background:${i === gs.turn ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.04)"};border:1px solid ${i === gs.turn ? "rgba(238,90,111,.18)" : "rgba(255,255,255,.06)"};flex-shrink:0" class="${i === gs.turn ? "turn-pulse" : ""}">
+          <span style="font-size:8px;color:var(--tx)">${p.slice(0, 4)}</span>
+          <span style="font-family:var(--fm);font-size:8px;color:var(--ac)">🍺${gs.drinks[p] || 0}</span>
         </div>
-      `
-          )
-          .join("")
-      );
+      `).join(""));
 
       const powerPills = [];
       if (gs.powers.heaven) powerPills.push(`<span class="power-pill">☝️ Heaven: ${gs.powers.heaven}</span>`);
@@ -896,6 +872,7 @@
       });
 
       UI.setHTML("g-extra", extra.join(""));
+
       Renderer.renderPlayersGrid();
       Renderer.renderMain();
       Renderer.renderMyPowers();
@@ -906,21 +883,18 @@
       const gs = APP.state.gs;
       if (!gs) return;
 
-      UI.setHTML(
-        "g-players-grid",
-        gs.players
-          .map((p, i) => {
-            const isTurn = gs.turn === i;
-            const badges = [];
+      UI.setHTML("g-players-grid", gs.players.map((p, i) => {
+        const isTurn = gs.turn === i;
+        const badges = [];
 
-            if (gs.powers.heaven === p) badges.push(`<span class="mate-badge">☝️ Heaven</span>`);
-            if (gs.powers.thumbmaster === p) badges.push(`<span class="mate-badge">👍 Thumb</span>`);
-            if (gs.powers.questionmaster === p) badges.push(`<span class="mate-badge">❓ Questions</span>`);
+        if (gs.powers.heaven === p) badges.push(`<span class="mate-badge">☝️ Heaven</span>`);
+        if (gs.powers.thumbmaster === p) badges.push(`<span class="mate-badge">👍 Thumb</span>`);
+        if (gs.powers.questionmaster === p) badges.push(`<span class="mate-badge">❓ Questions</span>`);
 
-            const mateTargets = gs.mates.filter((m) => m[0] === p).map((m) => m[1]);
-            mateTargets.forEach((t) => badges.push(`<span class="mate-badge">🤝 ${t}</span>`));
+        const mateTargets = gs.mates.filter((m) => m[0] === p).map((m) => m[1]);
+        mateTargets.forEach((t) => badges.push(`<span class="mate-badge">🤝 ${t}</span>`));
 
-            return `
+        return `
           <div class="player-tile ${isTurn ? "turn" : ""}">
             <div class="player-top">
               <div class="player-dot"></div>
@@ -933,9 +907,7 @@
             </div>
           </div>
         `;
-          })
-          .join("")
-      );
+      }).join(""));
     },
 
     renderMain() {
@@ -948,28 +920,20 @@
 
         el.innerHTML = `
           <div class="arena-wrap">
-            <div class="arena-center">
-              <div class="info-card gold">
-                <div style="font-size:64px;margin-bottom:8px">🍺</div>
-                <h3 style="font-size:24px;margin-bottom:10px">GAME OVER</h3>
-                <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0 14px">
-                  ${sorted
-                    .map(
-                      (p, i) => `
-                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;background:${i === 0 ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.03)"};border:1px solid ${i === 0 ? "rgba(238,90,111,.22)" : "rgba(255,255,255,.06)"}">
-                      <span style="font-family:var(--fm);color:${i === 0 ? "var(--ac)" : "var(--mt)"};font-size:12px">#${i + 1}</span>
-                      <span style="flex:1;text-align:center;color:var(--tx);font-size:14px;font-weight:800">${p}</span>
-                      <span class="drink-badge" style="font-size:10px">🍺 ${gs.drinks[p] || 0}</span>
-                    </div>
-                  `
-                    )
-                    .join("")}
-                </div>
-                <p style="color:var(--ac);font-size:14px;margin-bottom:14px">🏆 ${sorted[0]} drank the most!</p>
-                <div class="info-actions">
-                  <button class="btn btn-gd" id="b-reset">PLAY AGAIN</button>
-                </div>
+            <div style="text-align:center;position:relative;z-index:2;width:100%;max-width:360px;padding-top:22px;">
+              <div style="font-size:62px;margin-bottom:8px;">🍺</div>
+              <h2 style="font-family:var(--fd);color:var(--ac);font-size:28px;margin-bottom:14px;">GAME OVER</h2>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+                ${sorted.map((p, i) => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:14px;background:${i === 0 ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.03)"};border:1px solid ${i === 0 ? "rgba(238,90,111,.22)" : "rgba(255,255,255,.06)"};">
+                    <span style="font-family:var(--fm);color:${i === 0 ? "var(--ac)" : "var(--mt)"};font-size:13px;">#${i + 1}</span>
+                    <span style="flex:1;text-align:center;color:var(--tx);font-size:15px;font-weight:700;">${p}</span>
+                    <span class="drink-badge" style="font-size:11px">🍺 ${gs.drinks[p] || 0}</span>
+                  </div>
+                `).join("")}
               </div>
+              <p style="color:var(--ac);font-size:16px;margin-bottom:18px;">🏆 ${sorted[0]} drank the most!</p>
+              <button class="btn btn-gd" id="b-reset" style="padding:14px 30px;font-size:15px;">PLAY AGAIN</button>
             </div>
           </div>
         `;
@@ -985,28 +949,28 @@
 
       let html = `
         <div class="arena-wrap">
-          <div class="arena-center">
-            <div class="turn-line">
+          <div style="text-align:center;position:relative;z-index:2;width:100%;max-width:360px;">
+            <div style="font-family:var(--fm);font-size:11px;margin-bottom:10px;color:${meTurn ? "var(--gd)" : "var(--mt)"};font-weight:${meTurn ? 700 : 400};text-align:center;">
               ${meTurn ? "YOUR TURN — tap the card!" : `${gs.players[gs.turn]}'s turn`}
             </div>
 
-            <div class="${gs.flip ? "card-draw-anim" : ""}" style="display:flex;justify-content:center;">
-              <div class="card-w ${gs.phase === "idle" || (gs.phase === "shown" && meTurn) ? "draw-enabled" : ""}" id="b-draw">
+            <div class="${gs.flip ? "card-draw-anim" : ""}" style="margin-bottom:8px;display:flex;justify-content:center;">
+              <div class="card-w ${gs.phase === "idle" || gs.phase === "shown" ? "draw-enabled" : ""}" id="b-draw">
                 <div class="card-i${gs.flip ? " flipped" : ""}">
                   <div class="card-f card-b">
-                    <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:14px;display:flex;align-items:center;justify-content:center">
-                      <span style="font-size:34px;animation:glow 2s ease-in-out infinite">👑</span>
+                    <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                      <span style="font-size:30px;animation:glow 2s ease-in-out infinite;">👑</span>
                     </div>
                   </div>
                   <div class="card-f card-fr">
-                    <div style="position:absolute;top:8px;left:10px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1">
-                      <div style="font-size:22px">${c.v}</div>
-                      <div style="font-size:14px">${c.s}</div>
+                    <div style="position:absolute;top:5px;left:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1;">
+                      <div style="font-size:18px">${c.v}</div>
+                      <div style="font-size:12px">${c.s}</div>
                     </div>
-                    <span style="font-size:62px;color:${SC[c.s]}">${c.s}</span>
-                    <div style="position:absolute;bottom:8px;right:10px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1;transform:rotate(180deg)">
-                      <div style="font-size:22px">${c.v}</div>
-                      <div style="font-size:14px">${c.s}</div>
+                    <span style="font-size:48px;color:${SC[c.s]}">${c.s}</span>
+                    <div style="position:absolute;bottom:5px;right:8px;font-family:var(--fd);font-weight:900;color:${SC[c.s]};line-height:1;transform:rotate(180deg);">
+                      <div style="font-size:18px">${c.v}</div>
+                      <div style="font-size:12px">${c.s}</div>
                     </div>
                   </div>
                 </div>
@@ -1016,71 +980,67 @@
 
       if (gs.phase === "idle") {
         html += `
-          <div class="deck-bars">
-            ${Array.from({ length: Math.min(20, Math.ceil(Math.max(gs.deck.length, 1) / 2.6)) })
-              .map((_, i) => `<div style="opacity:${0.1 + i * 0.04}"></div>`)
-              .join("")}
+          <div style="display:flex;gap:2px;margin-bottom:4px;justify-content:center;">
+            ${Array.from({ length: Math.min(20, Math.ceil(Math.max(gs.deck.length, 1) / 2.6)) }).map((_, i) =>
+              `<div style="width:2px;height:8px;border-radius:1px;background:var(--ac);opacity:${0.1 + i * 0.04}"></div>`
+            ).join("")}
           </div>
         `;
       }
 
       if (gs.flip && r && gs.phase === "shown") {
         html += `
-          <div class="info-card">
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:22px">${r.i}</span>
-              <h3>${c.v} — ${r.n}</h3>
+          <div style="background:rgba(238,90,111,.05);border:1px solid rgba(238,90,111,.1);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;margin:0 auto;animation:fadeIn .3s;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px;">
+              <span style="font-size:20px">${r.i}</span>
+              <h3 style="font-family:var(--fd);color:var(--ac);font-size:15px">${c.v} — ${r.n}</h3>
             </div>
-            ${r.t === "king" ? `<div class="info-meta">Kings: ${gs.kc}/4</div>` : ""}
-            <p style="margin-top:8px">${r.d}</p>
-            ${r.t === "power" ? `<div class="info-meta">⚡ Stored by ${gs.players[gs.turn]}</div>` : ""}
-            <div class="info-actions">
-              <button class="btn btn-s" id="b-next">Next Turn →</button>
-            </div>
+            ${r.t === "king" ? `<p style="font-family:var(--fm);color:var(--gd);font-size:10px;margin-bottom:2px">Kings: ${gs.kc}/4</p>` : ""}
+            <p style="color:var(--mt);font-size:11px;margin-bottom:6px;line-height:1.4">${r.d}</p>
+            ${r.t === "power" ? `<p style="font-family:var(--fm);color:var(--gd);font-size:9px;margin-bottom:4px">⚡ Stored by ${gs.players[gs.turn]}</p>` : ""}
+            <p style="font-family:var(--fm);color:var(--gd);font-size:10px;">Tap the deck for next turn</p>
           </div>
         `;
       }
 
       if (gs.phase === "rule" && meTurn) {
         html += `
-          <div class="info-card gold">
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:22px">👑</span>
-              <h3>MAKE A RULE</h3>
+          <div style="background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.12);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;margin:0 auto;animation:fadeIn .3s;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;">
+              <span style="font-size:20px">👑</span>
+              <h3 style="font-family:var(--fd);color:var(--gd);font-size:15px">MAKE A RULE</h3>
             </div>
-            <div class="info-meta">Kings: ${gs.kc}/4</div>
-            <div class="rule-box">
-              <textarea id="i-rule" class="ta" placeholder="Type your rule..."></textarea>
-            </div>
-            <div class="info-actions">
-              <button class="btn btn-gd" id="b-addrule">Add Rule</button>
-              <button class="btn btn-s" id="b-skiprule">Skip</button>
+            <p style="font-family:var(--fm);color:var(--gd);font-size:9px;margin-bottom:4px">Kings: ${gs.kc}/4</p>
+            <textarea id="i-rule" class="ta" placeholder="Type your rule..." style="max-width:280px;margin-bottom:6px;font-size:12px;padding:8px 12px"></textarea>
+            <div style="display:flex;gap:6px;justify-content:center">
+              <button class="btn btn-gd" id="b-addrule" style="font-size:11px;padding:6px 16px">Add Rule</button>
+              <button id="b-skiprule" style="background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Skip</button>
             </div>
           </div>
         `;
       }
 
       if (gs.phase === "rule" && !meTurn) {
-        html += `<div class="arena-mini-note">${gs.players[gs.turn]} is making a rule...</div>`;
+        html += `<p style="color:var(--mt);font-size:12px;text-align:center">${gs.players[gs.turn]} is making a rule...</p>`;
       }
 
       if (gs.phase === "pick" && gs.pick?.from !== APP.state.me) {
-        html += `<div class="arena-mini-note">${gs.pick.from} is picking...</div>`;
+        html += `<p style="color:var(--mt);font-size:12px;text-align:center">${gs.pick.from} is picking...</p>`;
       }
 
       if (gs.phase === "timed") {
-        html += `<div class="arena-mini-note" style="color:var(--gd)">⏱ Round in progress...</div>`;
+        html += `<p style="color:var(--gd);font-size:12px;text-align:center;animation:pulse 1.5s infinite">⏱ Round in progress...</p>`;
       }
 
       if (gs.phase === "waterfall") {
         html += `
-          <div class="info-card">
+          <div id="wf-display" style="text-align:center;animation:fadeIn .3s;">
             <div style="font-size:36px;margin-bottom:4px">🌊</div>
-            <h3 style="margin-bottom:2px">WATERFALL!</h3>
-            <p style="margin-bottom:10px">Everyone drinks until the timer runs out!</p>
-            <div id="wf-clock" style="font-family:var(--fd);font-size:44px;color:var(--gd);line-height:1;margin-bottom:10px"></div>
-            <div class="progress-track" style="margin:0 auto 4px">
-              <div id="wf-bar" class="progress-fill progress-gd"></div>
+            <h3 style="font-family:var(--fd);color:var(--ac);font-size:18px;margin-bottom:2px">WATERFALL!</h3>
+            <p style="color:var(--mt);font-size:10px;margin-bottom:8px">Everyone drinks until the timer runs out!</p>
+            <div id="wf-clock" style="font-family:var(--fd);font-size:42px;color:var(--gd)"></div>
+            <div style="width:200px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin:8px auto;overflow:hidden">
+              <div id="wf-bar" style="height:100%;background:var(--gd);border-radius:3px;width:100%;transition:width .1s linear"></div>
             </div>
           </div>
         `;
@@ -1096,18 +1056,21 @@
       const drawBtn = $("b-draw");
       if (drawBtn) {
         bindTap(drawBtn, () => {
-          if (gs.phase === "idle" && meTurn) {
+          const currentGs = APP.state.gs;
+          if (!currentGs) return;
+
+          const isMyTurn = currentGs.players[currentGs.turn] === APP.state.me;
+
+          if (currentGs.phase === "idle" && isMyTurn) {
             Actions.run({ a: "draw", p: APP.state.me });
             return;
           }
 
-          if (gs.phase === "shown" && meTurn) {
+          if (currentGs.phase === "shown") {
             Actions.run({ a: "next" });
           }
         });
       }
-
-      if ($("b-next")) bindTap($("b-next"), () => Actions.run({ a: "next" }));
 
       if ($("b-addrule")) {
         bindTap($("b-addrule"), () => {
@@ -1116,7 +1079,9 @@
         });
       }
 
-      if ($("b-skiprule")) bindTap($("b-skiprule"), () => Actions.run({ a: "skiprule" }));
+      if ($("b-skiprule")) {
+        bindTap($("b-skiprule"), () => Actions.run({ a: "skiprule" }));
+      }
 
       Renderer.mountArenaVideos();
       Renderer.runWaterfallClock();
@@ -1146,18 +1111,11 @@
       }
 
       wrap.classList.remove("hidden");
-      UI.setHTML(
-        "g-pw-list",
-        myPowers
-          .map(
-            (pw) => `
-        <button class="btn btn-s pw-b" data-k="${pw.k}">
+      UI.setHTML("g-pw-list", myPowers.map((pw) => `
+        <button class="btn btn-s pw-b" data-k="${pw.k}" style="padding:6px 14px;font-size:11px;white-space:nowrap">
           ${pw.i} ${pw.l}
         </button>
-      `
-          )
-          .join("")
-      );
+      `).join(""));
 
       document.querySelectorAll(".pw-b").forEach((btn) => {
         bindTap(btn, () => {
@@ -1212,16 +1170,9 @@
       UI.setText("tm-title", r?.n || "Round");
       UI.setText("tm-desc", r?.d || "");
 
-      UI.setHTML(
-        "tm-players",
-        gs.players
-          .map(
-            (p) => `
-        <button class="btn btn-s tm-fail" data-p="${p}" style="padding:10px 14px;font-size:12px">${p}</button>
-      `
-          )
-          .join("")
-      );
+      UI.setHTML("tm-players", gs.players.map((p) => `
+        <button class="btn btn-s tm-fail" data-p="${p}" style="padding:6px 14px;font-size:11px">${p}</button>
+      `).join(""));
 
       document.querySelectorAll(".tm-fail").forEach((btn) => {
         bindTap(btn, () => {
@@ -1257,27 +1208,15 @@
 
       UI.setText("pk-icon", c.t === "you" ? "👉" : c.t === "mate" ? "🤝" : "❓");
       UI.setText("pk-title", c.t === "you" ? "YOU" : c.t === "mate" ? "MATE" : "GOTCHA");
-      UI.setText(
-        "pk-label",
-        c.t === "you"
-          ? "Pick someone to drink!"
-          : c.t === "mate"
-            ? "Pick your drinking mate!"
-            : "Who answered?"
-      );
+      UI.setText("pk-label", c.t === "you" ? "Pick someone to drink!" : c.t === "mate" ? "Pick your drinking mate!" : "Who answered?");
 
-      UI.setHTML(
-        "pk-btns",
-        gs.players
-          .filter((p) => p !== APP.state.me)
-          .map(
-            (p) => `
-          <button class="btn btn-s pk-c" data-n="${p}" style="text-align:center;padding:12px 14px">
+      UI.setHTML("pk-btns", gs.players
+        .filter((p) => p !== APP.state.me)
+        .map((p) => `
+          <button class="btn btn-s pk-c" data-n="${p}" style="text-align:center">
             ${p} <span class="drink-badge">🍺${gs.drinks[p] || 0}</span>
           </button>
-        `
-          )
-          .join("")
+        `).join("")
       );
 
       document.querySelectorAll(".pk-c").forEach((btn) => {
@@ -1294,21 +1233,16 @@
 
       $("ov-results")?.classList.remove("hidden");
 
-      UI.setHTML(
-        "res-list",
-        res.rk
-          .map((x, i) => {
-            const last = i === res.rk.length - 1;
-            return `
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:${last ? "rgba(238,90,111,.1)" : "rgba(255,255,255,.02)"};border:1px solid ${last ? "var(--ac)" : "transparent"}">
+      UI.setHTML("res-list", res.rk.map((x, i) => {
+        const last = i === res.rk.length - 1;
+        return `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:10px;background:${last ? "rgba(238,90,111,.1)" : "rgba(255,255,255,.02)"};border:1px solid ${last ? "var(--ac)" : "transparent"}">
             <span style="font-family:var(--fm);color:${i === 0 ? "var(--gd)" : "var(--mt)"};font-weight:700;width:24px">#${i + 1}</span>
-            <span style="flex:1;color:${last ? "var(--ac)" : "var(--tx)"};font-weight:700;font-size:14px">${x.p}</span>
+            <span style="flex:1;color:${last ? "var(--ac)" : "var(--tx)"};font-weight:600;font-size:14px">${x.p}</span>
             <span style="font-family:var(--fm);color:var(--mt);font-size:11px">${x.t !== null ? `${(x.t / 1000).toFixed(2)}s` : "TIMEOUT"}</span>
           </div>
         `;
-          })
-          .join("")
-      );
+      }).join(""));
 
       UI.setText("res-loser", res.loser ? `🍺 ${res.loser} drinks! (+1)` : "No loser");
 
@@ -1365,10 +1299,7 @@
       APP.state.code = Util.randCode();
       APP.state.isHost = true;
 
-      UI.setHTML(
-        "lobby-status",
-        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Connecting...</span>`
-      );
+      UI.setHTML("lobby-status", `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Connecting...</span>`);
 
       if (typeof Peer === "undefined") {
         APP.state.peer = null;
@@ -1406,10 +1337,7 @@
         return alert("Can't connect. Check internet and refresh.");
       }
 
-      UI.setHTML(
-        "lobby-status",
-        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`
-      );
+      UI.setHTML("lobby-status", `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`);
 
       try {
         const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 4) || "plyr";
@@ -1438,11 +1366,20 @@
       }
     },
 
-    startGame() {
+    async startGame() {
       if (!APP.state.gs) return;
+
       UI.show("s-game");
       Renderer.renderAll();
       Renderer.mountArenaVideos();
+
+      if (!APP.state.localStream) {
+        try {
+          await Video.start();
+        } catch {}
+      } else {
+        Video.addBox("me", APP.state.localStream, true, APP.state.me);
+      }
     },
 
     showInvite() {
@@ -1476,14 +1413,12 @@
         el.style.background = APP.state.isFS ? "var(--bg)" : "";
       });
 
-      UI.setText("b-fs", APP.state.isFS ? "✕ Full" : "⛶ Full");
+      UI.setText("b-fs", APP.state.isFS ? "✕" : "⛶ Full");
     },
 
     async keepAwake() {
       try {
-        if ("wakeLock" in navigator) {
-          await navigator.wakeLock.request("screen");
-        }
+        if ("wakeLock" in navigator) await navigator.wakeLock.request("screen");
       } catch {}
     },
 

@@ -52,8 +52,8 @@
     A: { n: "Waterfall", i: "🌊", d: "Everyone drinks until the timer ends.", t: "waterfall" },
     2: { n: "You", i: "👉", d: "Pick someone to drink.", t: "pick", pk: "you" },
     3: { n: "Me", i: "🍺", d: "You drink.", t: "instant" },
-    4: { n: "Whores", i: "💃", d: "All ladies drink. Use house rules if needed.", t: "instant" },
-    5: { n: "Never Have I Ever", i: "🖐️", d: "Play Never Have I Ever. Loser drinks.", t: "instant" },
+    4: { n: "Whores", i: "💃", d: "Girls drink.", t: "instant" },
+    5: { n: "Guys", i: "🍻", d: "Guys drink.", t: "instant" },
     6: { n: "Dicks", i: "🕺", d: "Everyone drinks.", t: "instant" },
     7: {
       n: "Heaven",
@@ -658,13 +658,11 @@
       el.innerHTML = `
         <button
           id="b-togc"
-          class="btn btn-s"
-          style="padding:3px 6px;font-size:8px;${APP.state.camOn ? "color:#4ade80" : "color:#666"}"
+          class="btn btn-s btn-mini-control ${APP.state.camOn ? "btn-enabled" : "btn-disabled"}"
         >${APP.state.camOn ? "📹" : "🚫"}</button>
         <button
           id="b-togm"
-          class="btn btn-s"
-          style="padding:3px 6px;font-size:8px;${APP.state.micOn ? "color:#4ade80" : "color:#666"}"
+          class="btn btn-s btn-mini-control ${APP.state.micOn ? "btn-enabled" : "btn-disabled"}"
         >${APP.state.micOn ? "🎤" : "🔇"}</button>
       `;
 
@@ -994,8 +992,8 @@
         gs.players
           .map(
             (player) => `
-              <div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px">
-                ${player}${player === APP.state.me ? ' <span style="color:var(--mt);font-size:9px">(you)</span>' : ""}
+              <div class="wait-player-row">
+                ${player}${player === APP.state.me ? ' <span class="wait-player-you">(you)</span>' : ""}
               </div>
             `
           )
@@ -1030,13 +1028,10 @@
         : "offline";
 
       const dotColor = connected ? "#4ade80" : APP.state.peer ? "var(--gd)" : "var(--ac)";
-      const html = `<div class="status-dot" style="background:${dotColor}"></div><span style="color:var(--tx)">${statusText}</span>`;
+      const html = `<div class="status-dot" style="background:${dotColor}"></div><span class="conn-status-text">${statusText}</span>`;
 
       UI.setHTML("g-conn", html);
-      UI.setHTML(
-        "w-status",
-        `<div class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:4px 10px">${html}</div>`
-      );
+      UI.setHTML("w-status", `<div class="status-bar wait-status-pill">${html}</div>`);
     },
 
     renderGame() {
@@ -1051,12 +1046,9 @@
         gs.players
           .map(
             (player, i) => `
-              <div
-                style="display:flex;align-items:center;gap:2px;padding:2px 6px;border-radius:6px;background:${i === gs.turn ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.04)"};border:1px solid ${i === gs.turn ? "rgba(238,90,111,.18)" : "rgba(255,255,255,.06)"};flex-shrink:0"
-                class="${i === gs.turn ? "turn-pulse" : ""}"
-              >
-                <span style="font-size:8px;color:var(--tx)">${player.slice(0, 4)}</span>
-                <span style="font-family:var(--fm);font-size:8px;color:var(--ac)">🍺${gs.drinks[player] || 0}</span>
+              <div class="score-pill ${i === gs.turn ? "score-pill-active turn-pulse" : "score-pill-idle"}">
+                <span class="score-pill-name">${player.slice(0, 4)}</span>
+                <span class="score-pill-drinks">🍺${gs.drinks[player] || 0}</span>
               </div>
             `
           )
@@ -1067,13 +1059,13 @@
 
       gs.mates.forEach(([from, to]) => {
         extra.push(
-          `<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">🤝 ${from}→${to}</span>`
+          `<span class="chip chip-gold">🤝 ${from}→${to}</span>`
         );
       });
 
       gs.rules.forEach((rule) => {
         extra.push(
-          `<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">📜 ${rule.length > 18 ? rule.slice(0, 18) + "…" : rule}</span>`
+          `<span class="chip chip-gold">📜 ${rule.length > 18 ? rule.slice(0, 18) + "…" : rule}</span>`
         );
       });
 
@@ -1095,15 +1087,15 @@
           myPowers
             .map(
               (power) => `
-                <button class="btn btn-s pw-b" data-k="${power.k}" style="padding:4px 10px;font-size:9px;white-space:nowrap">
-                  <span style="margin-right:3px">${power.i}</span>${power.k === "questionmaster" ? "GOTCHA!" : "USE " + power.l}
+                <button class="btn btn-s power-btn" data-k="${power.k}">
+                  <span class="power-btn-icon">${power.i}</span>${power.k === "questionmaster" ? "GOTCHA!" : "USE " + power.l}
                 </button>
               `
             )
             .join("")
         );
 
-        document.querySelectorAll(".pw-b").forEach((btn) => {
+        document.querySelectorAll(".power-btn").forEach((btn) => {
           btn.onclick = () => {
             const key = btn.dataset.k;
             if (key === "questionmaster") {
@@ -1135,30 +1127,30 @@
       const rule = gs.drawn ? RULES[gs.drawn.v] : null;
 
       let html = `
-        <div style="font-family:var(--fm);font-size:11px;margin-bottom:6px;color:${meTurn ? "var(--gd)" : "var(--mt)"};font-weight:${meTurn ? 700 : 400}">
+        <div class="turn-label ${meTurn ? "turn-label-active" : "turn-label-idle"}">
           ${meTurn ? "YOUR TURN — tap the card!" : gs.players[gs.turn] + "'s turn"}
         </div>
 
-        <div class="${gs.flip ? "card-draw-anim" : ""}" style="margin-bottom:8px">
+        <div class="${gs.flip ? "card-draw-anim" : ""} card-wrap-main">
           <div class="card-w" id="b-draw">
             <div class="card-i${gs.flip ? " flipped" : ""}">
               <div class="card-f card-b">
-                <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:10px;display:flex;align-items:center;justify-content:center">
-                  <span style="font-size:30px;animation:glow 2s ease-in-out infinite">👑</span>
+                <div class="card-back-inner">
+                  <span class="card-back-icon">👑</span>
                 </div>
               </div>
 
               <div class="card-f card-fr">
-                <div style="position:absolute;top:5px;left:8px;font-family:var(--fd);font-weight:900;color:${SUIT_COLORS[card.s]};line-height:1">
-                  <div style="font-size:18px">${card.v}</div>
-                  <div style="font-size:12px">${card.s}</div>
+                <div class="card-corner card-corner-top" style="color:${SUIT_COLORS[card.s]}">
+                  <div class="card-corner-rank">${card.v}</div>
+                  <div class="card-corner-suit">${card.s}</div>
                 </div>
 
-                <span style="font-size:48px;color:${SUIT_COLORS[card.s]}">${card.s}</span>
+                <span class="card-center-suit" style="color:${SUIT_COLORS[card.s]}">${card.s}</span>
 
-                <div style="position:absolute;bottom:5px;right:8px;font-family:var(--fd);font-weight:900;color:${SUIT_COLORS[card.s]};line-height:1;transform:rotate(180deg)">
-                  <div style="font-size:18px">${card.v}</div>
-                  <div style="font-size:12px">${card.s}</div>
+                <div class="card-corner card-corner-bottom" style="color:${SUIT_COLORS[card.s]}">
+                  <div class="card-corner-rank">${card.v}</div>
+                  <div class="card-corner-suit">${card.s}</div>
                 </div>
               </div>
             </div>
@@ -1168,12 +1160,9 @@
 
       if (gs.phase === "idle") {
         html += `
-          <div style="display:flex;gap:2px;margin-bottom:4px">
+          <div class="deck-mini-bars">
             ${Array.from({ length: Math.min(20, Math.ceil(gs.deck.length / 2.6)) })
-              .map(
-                (_, i) =>
-                  `<div style="width:2px;height:8px;border-radius:1px;background:var(--ac);opacity:${0.1 + i * 0.04}"></div>`
-              )
+              .map((_, i) => `<div class="deck-mini-bar" style="opacity:${0.1 + i * 0.04}"></div>`)
               .join("")}
           </div>
         `;
@@ -1181,57 +1170,57 @@
 
       if (gs.flip && rule && gs.phase === "shown") {
         html += `
-          <div style="background:rgba(238,90,111,.05);border:1px solid rgba(238,90,111,.1);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;animation:fadeIn .3s">
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px">
-              <span style="font-size:20px">${rule.i}</span>
-              <h3 style="font-family:var(--fd);color:var(--ac);font-size:15px">${card.v} — ${rule.n}</h3>
+          <div class="event-card event-card-accent">
+            <div class="event-card-header">
+              <span class="event-card-icon">${rule.i}</span>
+              <h3 class="event-card-title">${card.v} — ${rule.n}</h3>
             </div>
-            ${rule.t === "king" ? `<p style="font-family:var(--fm);color:var(--gd);font-size:10px;margin-bottom:2px">Kings: ${gs.kc}/4</p>` : ""}
-            <p style="color:var(--mt);font-size:11px;margin-bottom:6px;line-height:1.4">${rule.d}</p>
-            ${rule.t === "power" ? `<p style="font-family:var(--fm);color:var(--gd);font-size:9px;margin-bottom:4px">⚡ Stored by ${gs.players[gs.turn]}</p>` : ""}
-            <button class="btn btn-s" id="b-next" style="padding:6px 16px;font-size:11px">${gs.deck.length === 0 ? "Finish Game →" : "Next Turn →"}</button>
+            ${rule.t === "king" ? `<p class="event-card-subtle-gold">Kings: ${gs.kc}/4</p>` : ""}
+            <p class="event-card-desc">${rule.d}</p>
+            ${rule.t === "power" ? `<p class="event-card-subtle-gold">⚡ Stored by ${gs.players[gs.turn]}</p>` : ""}
+            <button class="btn btn-s event-card-btn" id="b-next">${gs.deck.length === 0 ? "Finish Game →" : "Next Turn →"}</button>
           </div>
         `;
       }
 
       if (gs.phase === "rule" && meTurn) {
         html += `
-          <div style="background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.12);border-radius:12px;padding:10px 16px;text-align:center;max-width:340px;animation:fadeIn .3s">
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px">
-              <span style="font-size:20px">👑</span>
-              <h3 style="font-family:var(--fd);color:var(--gd);font-size:15px">MAKE A RULE</h3>
+          <div class="event-card event-card-gold">
+            <div class="event-card-header">
+              <span class="event-card-icon">👑</span>
+              <h3 class="event-card-title-gold">MAKE A RULE</h3>
             </div>
-            <p style="font-family:var(--fm);color:var(--gd);font-size:9px;margin-bottom:4px">Kings: ${gs.kc}/4</p>
-            <textarea id="i-rule" class="ta" placeholder="Type your rule..." style="max-width:280px;margin-bottom:6px;font-size:12px;padding:8px 12px"></textarea>
-            <div style="display:flex;gap:6px;justify-content:center">
-              <button class="btn btn-gd" id="b-addrule" style="font-size:11px;padding:6px 16px">Add Rule</button>
-              <button id="b-skiprule" style="background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Skip</button>
+            <p class="event-card-subtle-gold">Kings: ${gs.kc}/4</p>
+            <textarea id="i-rule" class="ta rule-textarea" placeholder="Type your rule..."></textarea>
+            <div class="event-card-actions">
+              <button class="btn btn-gd event-card-btn" id="b-addrule">Add Rule</button>
+              <button id="b-skiprule" class="text-btn-muted">Skip</button>
             </div>
           </div>
         `;
       }
 
       if (gs.phase === "rule" && !meTurn) {
-        html += `<p style="color:var(--mt);font-size:12px;text-align:center">${gs.players[gs.turn]} is making a rule...</p>`;
+        html += `<p class="status-line-muted">${gs.players[gs.turn]} is making a rule...</p>`;
       }
 
       if (gs.phase === "pick" && gs.pick?.from !== APP.state.me) {
-        html += `<p style="color:var(--mt);font-size:12px;text-align:center">${gs.pick.from} is picking...</p>`;
+        html += `<p class="status-line-muted">${gs.pick.from} is picking...</p>`;
       }
 
       if (gs.phase === "timed") {
-        html += `<p style="color:var(--gd);font-size:12px;text-align:center;animation:pulse 1.5s infinite">⏱ Round in progress...</p>`;
+        html += `<p class="status-line-gold">⏱ Round in progress...</p>`;
       }
 
       if (gs.phase === "waterfall") {
         html += `
-          <div id="wf-display" style="text-align:center;animation:fadeIn .3s">
-            <div style="font-size:36px;margin-bottom:4px">🌊</div>
-            <h3 style="font-family:var(--fd);color:var(--ac);font-size:18px;margin-bottom:2px">WATERFALL!</h3>
-            <p style="color:var(--mt);font-size:10px;margin-bottom:8px">Everyone drinks until the timer runs out!</p>
-            <div id="wf-clock" style="font-family:var(--fd);font-size:42px;color:var(--gd)"></div>
-            <div style="width:200px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin:8px auto;overflow:hidden">
-              <div id="wf-bar" style="height:100%;background:var(--gd);border-radius:3px;width:100%;transition:width .1s linear"></div>
+          <div id="wf-display" class="waterfall-box">
+            <div class="waterfall-icon">🌊</div>
+            <h3 class="waterfall-title">WATERFALL!</h3>
+            <p class="waterfall-desc">Everyone drinks until the timer runs out!</p>
+            <div id="wf-clock" class="waterfall-clock"></div>
+            <div class="waterfall-track">
+              <div id="wf-bar" class="waterfall-bar"></div>
             </div>
           </div>
         `;
@@ -1275,30 +1264,30 @@
         .sort((a, b) => (gs.drinks[b] || 0) - (gs.drinks[a] || 0));
 
       el.innerHTML = `
-        <div style="text-align:center;animation:fadeIn .4s">
-          <div style="font-size:50px;margin-bottom:6px">🍺</div>
-          <h2 style="font-family:var(--fd);color:var(--ac);font-size:22px;margin-bottom:8px">GAME OVER</h2>
+        <div class="game-over-wrap">
+          <div class="game-over-icon">🍺</div>
+          <h2 class="game-over-title">GAME OVER</h2>
 
-          <div style="margin-bottom:8px">
-            <p style="font-family:var(--fm);color:var(--gd);font-size:10px">ALL 52 CARDS DRAWN</p>
+          <div class="game-over-subwrap">
+            <p class="game-over-sub">ALL 52 CARDS DRAWN</p>
           </div>
 
-          <div style="margin-bottom:12px">
+          <div class="game-over-list">
             ${sorted
               .map(
                 (player, i) => `
-                  <div style="display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:8px;margin-bottom:3px;${i === 0 ? "background:rgba(238,90,111,.1);border:1px solid rgba(238,90,111,.2)" : ""}">
-                    <span style="font-family:var(--fm);color:${i === 0 ? "var(--ac)" : "var(--mt)"};font-size:12px;width:20px">#${i + 1}</span>
-                    <span style="flex:1;color:var(--tx);font-size:13px">${player}</span>
-                    <span class="drink-badge" style="font-size:10px">🍺 ${gs.drinks[player] || 0}</span>
+                  <div class="game-over-row ${i === 0 ? "game-over-row-top" : ""}">
+                    <span class="game-over-rank ${i === 0 ? "game-over-rank-top" : ""}">#${i + 1}</span>
+                    <span class="game-over-name">${player}</span>
+                    <span class="drink-badge game-over-drink-badge">🍺 ${gs.drinks[player] || 0}</span>
                   </div>
                 `
               )
               .join("")}
           </div>
 
-          <p style="color:var(--ac);font-size:13px;margin-bottom:12px">🏆 ${sorted[0]} drank the most!</p>
-          <button class="btn btn-gd" id="b-reset" style="padding:10px 24px;font-size:14px">PLAY AGAIN</button>
+          <p class="game-over-winner">🏆 ${sorted[0]} drank the most!</p>
+          <button class="btn btn-gd game-over-btn" id="b-reset">PLAY AGAIN</button>
         </div>
       `;
 
@@ -1345,7 +1334,7 @@
         gs.players
           .map(
             (player) => `
-              <button class="btn btn-s tm-fail" data-p="${player}" style="padding:6px 14px;font-size:11px">${player}</button>
+              <button class="btn btn-s timer-fail-btn tm-fail" data-p="${player}">${player}</button>
             `
           )
           .join("")
@@ -1405,7 +1394,7 @@
           .filter((player) => player !== APP.state.me)
           .map(
             (player) => `
-              <button class="btn btn-s pk-c" data-n="${player}" style="text-align:center">
+              <button class="btn btn-s pick-player-btn pk-c" data-n="${player}">
                 ${player} <span class="drink-badge">🍺${gs.drinks[player] || 0}</span>
               </button>
             `
@@ -1438,10 +1427,10 @@
             const last = i === results.rk.length - 1;
 
             return `
-              <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:10px;background:${last ? "rgba(238,90,111,.1)" : "rgba(255,255,255,.02)"};border:1px solid ${last ? "var(--ac)" : "transparent"}">
-                <span style="font-family:var(--fm);color:${i === 0 ? "var(--gd)" : "var(--mt)"};font-weight:700;width:24px">#${i + 1}</span>
-                <span style="flex:1;color:${last ? "var(--ac)" : "var(--tx)"};font-weight:600;font-size:14px">${entry.p}</span>
-                <span style="font-family:var(--fm);color:var(--mt);font-size:11px">${entry.t !== null ? (entry.t / 1000).toFixed(2) + "s" : "TIMEOUT"}</span>
+              <div class="result-row ${last ? "result-row-loser" : ""}">
+                <span class="result-rank ${i === 0 ? "result-rank-first" : ""}">#${i + 1}</span>
+                <span class="result-name ${last ? "result-name-loser" : ""}">${entry.p}</span>
+                <span class="result-time">${entry.t !== null ? (entry.t / 1000).toFixed(2) + "s" : "TIMEOUT"}</span>
               </div>
             `;
           })
@@ -1526,7 +1515,7 @@
 
       UI.setHTML(
         "lobby-status",
-        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Connecting...</span>`
+        `<span class="spinner"></span> <span class="lobby-status-text">Connecting...</span>`
       );
 
       const loaded = await ensurePeerLoaded();
@@ -1534,7 +1523,7 @@
       if (!loaded || typeof Peer === "undefined") {
         APP.state.peer = null;
         APP.state.gs = Game.createState([name]);
-        UI.setHTML("lobby-status", `<span style="color:var(--ac);font-size:11px">⚠ offline mode</span>`);
+        UI.setHTML("lobby-status", `<span class="status-error-text">⚠ offline mode</span>`);
         UI.showBestScreen();
         Renderer.renderAll();
         return;
@@ -1551,7 +1540,7 @@
       } catch (error) {
         UI.setHTML(
           "lobby-status",
-          `<span style="color:var(--ac);font-size:11px">⚠ ${error.message || "Could not create room"}</span>`
+          `<span class="status-error-text">⚠ ${error.message || "Could not create room"}</span>`
         );
       }
     },
@@ -1583,7 +1572,7 @@
 
       UI.setHTML(
         "lobby-status",
-        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`
+        `<span class="spinner"></span> <span class="lobby-status-text">Joining...</span>`
       );
 
       try {
@@ -1600,7 +1589,7 @@
         const timeout = setTimeout(() => {
           UI.setHTML(
             "lobby-status",
-            `<span style="color:var(--ac);font-size:11px">⚠ Can't reach host</span>`
+            `<span class="status-error-text">⚠ Can't reach host</span>`
           );
         }, 10000);
 
@@ -1618,7 +1607,7 @@
       } catch (error) {
         UI.setHTML(
           "lobby-status",
-          `<span style="color:var(--ac);font-size:11px">⚠ ${error.message || "Could not join room"}</span>`
+          `<span class="status-error-text">⚠ ${error.message || "Could not join room"}</span>`
         );
       }
     },

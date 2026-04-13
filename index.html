@@ -11,7 +11,12 @@
 
   <div id="s-splash">
     <div class="splash-logo-wrap">
-      <img src="logo.png" alt="KAD Kings logo" class="splash-logo" onerror="this.style.display='none';document.getElementById('splash-fallback').classList.remove('hidden')">
+      <img
+        src="logo.png"
+        alt="KAD Kings logo"
+        class="splash-logo"
+        onerror="this.style.display='none';document.getElementById('splash-fallback').classList.remove('hidden')"
+      >
       <div id="splash-fallback" class="splash-fallback hidden">KAD KINGS</div>
     </div>
     <div class="splash-sub">THE DRINKING CARD GAME</div>
@@ -23,85 +28,98 @@
     <div class="lobby-vignette"></div>
   </div>
 
-  <div id="s-lobby" class="screen hidden" style="position:relative;z-index:1">
+  <div id="s-lobby" class="screen layer-screen hidden">
     <div class="brand-hero">
-      <img src="logo.png" alt="KAD Kings" class="brand-logo" onerror="this.style.display='none';document.getElementById('brand-fallback').classList.remove('hidden')">
+      <img
+        src="logo.png"
+        alt="KAD Kings"
+        class="brand-logo"
+        onerror="this.style.display='none';document.getElementById('brand-fallback').classList.remove('hidden')"
+      >
       <div id="brand-fallback" class="brand-logo-fallback hidden">
         <h1>KAD KINGS</h1>
         <p>THE DRINKING CARD GAME</p>
       </div>
     </div>
 
-    <div class="panel" style="width:100%;max-width:360px;padding:24px">
-      <input id="i-name" class="inp" placeholder="Your name" style="margin-bottom:14px">
-      <button id="b-create" class="btn btn-ac" style="width:100%;margin-bottom:14px">CREATE ROOM</button>
+    <div class="panel lobby-card">
+      <input id="i-name" class="inp lobby-name-input" placeholder="Your name">
+      <button id="b-create" class="btn btn-ac lobby-create-btn">CREATE ROOM</button>
 
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
-        <span style="color:var(--mt);font-size:10px;font-family:var(--fm)">OR JOIN</span>
-        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+      <div class="lobby-divider">
+        <div class="lobby-divider-line"></div>
+        <span class="lobby-divider-text">OR JOIN</span>
+        <div class="lobby-divider-line"></div>
       </div>
 
-      <div style="display:flex;gap:8px">
-        <input id="i-code" class="inp" placeholder="CODE" maxlength="5" style="text-align:center;letter-spacing:6px;font-family:var(--fm);font-size:18px;text-transform:uppercase">
+      <div class="lobby-join-row">
+        <input
+          id="i-code"
+          class="inp lobby-code-input"
+          placeholder="CODE"
+          maxlength="5"
+        >
         <button id="b-join" class="btn btn-s">JOIN</button>
       </div>
 
-      <div id="lobby-status" style="text-align:center;margin-top:14px;min-height:20px"></div>
+      <div id="lobby-status" class="lobby-status"></div>
     </div>
   </div>
 
-  <div id="s-wait" class="screen hidden" style="position:relative;z-index:1">
+  <div id="s-wait" class="screen layer-screen hidden">
     <div class="wait-brand">
       <img src="logo.png" alt="KAD Kings" onerror="this.style.display='none'">
     </div>
-    <div class="float" style="font-size:44px;margin-bottom:12px">👑</div>
-    <h2 style="font-family:var(--fd);color:var(--ac);font-size:24px;margin-bottom:12px;letter-spacing:3px">WAITING ROOM</h2>
 
-    <div class="panel" style="padding:12px 36px;margin-bottom:16px;text-align:center">
-      <p style="font-family:var(--fm);color:var(--mt);font-size:9px;letter-spacing:2px;margin-bottom:2px">ROOM CODE</p>
-      <span id="w-code" style="font-family:var(--fd);color:var(--gd);font-size:36px;letter-spacing:8px"></span>
+    <div class="float wait-crown">👑</div>
+    <h2 class="wait-title">WAITING ROOM</h2>
+
+    <div class="panel wait-room-code-card">
+      <p class="wait-room-code-label">ROOM CODE</p>
+      <span id="w-code" class="wait-room-code-value"></span>
     </div>
 
-    <div style="display:flex;gap:6px;margin-bottom:16px">
-      <button id="b-invite" class="btn btn-s" style="font-size:11px">📤 Invite</button>
-      <button id="b-fs" class="btn btn-dark" style="padding:8px 14px;font-size:11px">⛶ Full</button>
+    <div class="wait-actions-row">
+      <button id="b-invite" class="btn btn-s wait-action-btn">📤 Invite</button>
+      <button id="b-fs" class="btn btn-dark wait-fullscreen-btn">⛶ Full</button>
     </div>
 
-    <div id="w-status" style="margin-bottom:12px"></div>
+    <div id="w-status" class="wait-status"></div>
 
-    <div class="panel" style="width:260px;margin-bottom:18px">
-      <p style="font-family:var(--fm);color:var(--ac);font-size:10px;letter-spacing:1px;margin-bottom:8px">👥 PLAYERS</p>
+    <div class="panel wait-players-card">
+      <p class="wait-players-label">👥 PLAYERS</p>
       <div id="w-players"></div>
     </div>
 
     <button id="b-start" class="btn btn-ac" disabled>NEED 2+ PLAYERS</button>
-    <div class="small-note" style="margin-top:10px">Solo start is allowed for testing.</div>
+    <div class="small-note wait-solo-note">Solo start is allowed for testing.</div>
   </div>
 
-  <div id="s-game" class="hidden" style="height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;padding:4px 6px;position:relative;z-index:1">
-    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 0">
-      <span style="font-size:12px">👑</span>
-      <div id="vid-strip" class="vid-strip" style="flex:1;min-width:0"></div>
-      <div id="vid-ctrl-mini" style="flex-shrink:0">
-        <button id="b-cam" class="btn btn-s" style="padding:3px 8px;font-size:8px">📹</button>
+  <div id="s-game" class="game-screen hidden">
+    <div class="game-top-row">
+      <span class="game-top-crown">👑</span>
+      <div id="vid-strip" class="vid-strip game-vid-strip"></div>
+
+      <div id="vid-ctrl-mini" class="game-video-controls">
+        <button id="b-cam" class="btn btn-s game-cam-btn">📹</button>
       </div>
-      <div id="g-conn" class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:1px 5px;flex-shrink:0"></div>
+
+      <div id="g-conn" class="status-bar game-conn-bar"></div>
     </div>
 
-    <div id="g-info" style="display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 0;overflow-x:auto">
+    <div id="g-info" class="game-info-row">
       <span id="g-deck" class="chip"></span>
       <span id="g-kings" class="chip"></span>
-      <div id="g-scores" style="display:flex;gap:3px;flex:1;overflow-x:auto"></div>
-      <button id="b-inv2" class="btn btn-s" style="padding:2px 6px;font-size:7px;flex-shrink:0">📤</button>
+      <div id="g-scores" class="game-scores-row"></div>
+      <button id="b-inv2" class="btn btn-s game-invite-mini-btn">📤</button>
     </div>
 
-    <div id="g-extra" style="flex-shrink:0;display:flex;gap:4px;overflow-x:auto;padding:1px 0"></div>
+    <div id="g-extra" class="game-extra-row"></div>
 
-    <div id="g-main" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0"></div>
+    <div id="g-main" class="game-main"></div>
 
-    <div id="g-powers" style="display:none;gap:3px;flex-shrink:0;overflow-x:auto;padding:2px 0">
-      <div id="g-pw-list" style="display:flex;gap:3px"></div>
+    <div id="g-powers" class="game-powers-row">
+      <div id="g-pw-list" class="game-powers-list"></div>
     </div>
 
     <div class="hidden">
@@ -115,60 +133,70 @@
   </div>
 
   <div id="m-invite" class="ov hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="panel" style="padding:28px;max-width:340px;width:85%;text-align:center">
-      <div style="font-size:36px;margin-bottom:10px">📤</div>
-      <h3 style="font-family:var(--fd);color:var(--ac);font-size:20px;margin-bottom:12px">Invite Friends</h3>
-      <p style="color:var(--mt);font-size:12px;margin-bottom:12px">Share this room code:</p>
-      <div style="background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.25);border-radius:12px;padding:12px 20px;margin-bottom:16px">
-        <span id="m-code" style="font-family:var(--fd);color:var(--gd);font-size:32px;letter-spacing:8px;user-select:all"></span>
+    <div class="panel invite-modal-card">
+      <div class="invite-icon">📤</div>
+      <h3 class="invite-title">Invite Friends</h3>
+      <p class="invite-copy">Share this room code:</p>
+
+      <div class="invite-code-box">
+        <span id="m-code" class="invite-code-value"></span>
       </div>
+
       <button id="b-copy" class="btn btn-s">📋 Copy Invite</button>
-      <br><button id="b-close-invite" style="margin-top:12px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Close</button>
+      <br>
+      <button id="b-close-invite" class="invite-close-btn">Close</button>
     </div>
   </div>
 
   <div id="ov-react" class="ov hidden">
-    <div id="r-icon" style="font-size:56px;margin-bottom:12px"></div>
-    <h2 id="r-title" style="font-family:var(--fd);color:var(--ac);font-size:28px;margin-bottom:6px;letter-spacing:2px"></h2>
-    <p id="r-by" style="font-family:var(--fm);color:var(--mt);font-size:12px;margin-bottom:20px"></p>
-    <div style="width:240px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:20px;overflow:hidden">
-      <div id="r-bar" style="height:100%;background:var(--ac);border-radius:3px;width:100%;transition:width .05s linear"></div>
+    <div id="r-icon" class="reaction-icon"></div>
+    <h2 id="r-title" class="reaction-title"></h2>
+    <p id="r-by" class="reaction-by"></p>
+
+    <div class="progress-track progress-track-reaction">
+      <div id="r-bar" class="progress-fill progress-fill-accent progress-fill-fast"></div>
     </div>
+
     <div id="r-tap-area">
-      <button id="r-tap" style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,var(--ac),#a01030);border:3px solid rgba(255,255,255,.15);color:#fff;font-size:22px;font-family:var(--fd);font-weight:900;letter-spacing:2px;box-shadow:0 0 50px rgba(238,90,111,.5);animation:pulse 1s ease-in-out infinite">TAP!</button>
+      <button id="r-tap" class="reaction-tap-btn">TAP!</button>
     </div>
-    <div id="r-done" class="hidden" style="text-align:center">
-      <div style="font-size:40px;margin-bottom:6px">✅</div>
-      <p style="font-family:var(--fm);color:var(--gd);font-size:13px">Tapped!</p>
+
+    <div id="r-done" class="hidden reaction-done">
+      <div class="reaction-done-icon">✅</div>
+      <p class="reaction-done-text">Tapped!</p>
     </div>
-    <p id="r-time" style="font-family:var(--fm);color:var(--mt);font-size:10px;margin-top:16px"></p>
+
+    <p id="r-time" class="reaction-time"></p>
   </div>
 
   <div id="ov-results" class="ov hidden">
-    <h2 style="font-family:var(--fd);color:var(--gd);font-size:24px;margin-bottom:20px;letter-spacing:2px">RESULTS</h2>
-    <div id="res-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;width:280px"></div>
-    <p id="res-loser" style="color:var(--ac);font-size:15px;font-weight:700;margin-bottom:16px"></p>
+    <h2 class="results-title">RESULTS</h2>
+    <div id="res-list" class="results-list"></div>
+    <p id="res-loser" class="results-loser"></p>
     <button id="b-res-ok" class="btn btn-s">Continue</button>
   </div>
 
   <div id="ov-pick" class="ov hidden">
-    <div id="pk-icon" style="font-size:40px;margin-bottom:10px"></div>
-    <h2 id="pk-title" style="font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:6px"></h2>
-    <p id="pk-label" style="color:var(--mt);font-size:13px;margin-bottom:22px"></p>
-    <div id="pk-btns" style="display:flex;flex-direction:column;gap:8px;width:240px"></div>
+    <div id="pk-icon" class="pick-icon"></div>
+    <h2 id="pk-title" class="pick-title"></h2>
+    <p id="pk-label" class="pick-label"></p>
+    <div id="pk-btns" class="pick-buttons"></div>
   </div>
 
   <div id="ov-timer" class="ov hidden">
-    <div id="tm-icon" style="font-size:48px;margin-bottom:10px"></div>
-    <h2 id="tm-title" style="font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:4px"></h2>
-    <p id="tm-desc" style="color:var(--mt);font-size:12px;margin-bottom:16px;text-align:center;max-width:280px"></p>
-    <div id="tm-clock" style="font-family:var(--fd);font-size:48px;color:var(--ac);margin-bottom:16px">30</div>
-    <div style="width:240px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:20px;overflow:hidden">
-      <div id="tm-bar" style="height:100%;background:var(--gd);border-radius:3px;width:100%;transition:width .1s linear"></div>
+    <div id="tm-icon" class="timer-icon"></div>
+    <h2 id="tm-title" class="timer-title"></h2>
+    <p id="tm-desc" class="timer-desc"></p>
+
+    <div id="tm-clock" class="timer-clock">30</div>
+
+    <div class="progress-track progress-track-timer">
+      <div id="tm-bar" class="progress-fill progress-fill-gold progress-fill-medium"></div>
     </div>
-    <p style="color:var(--mt);font-size:10px;margin-bottom:16px">When someone fails, tap their name:</p>
-    <div id="tm-players" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:300px"></div>
-    <button id="tm-skip" style="margin-top:16px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Skip (no one failed)</button>
+
+    <p class="timer-help">When someone fails, tap their name:</p>
+    <div id="tm-players" class="timer-players"></div>
+    <button id="tm-skip" class="timer-skip-btn">Skip (no one failed)</button>
   </div>
 
   <div id="ov-drink" class="you-drink hidden">

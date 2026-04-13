@@ -1,18 +1,190 @@
-<div id="power-bar" style="
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  margin:10px;
-  font-family:monospace;
-"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>KAD KINGS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-<div id="players" style="
-  display:flex;
-  gap:10px;
-  margin:10px;
-"></div>
+  <!-- LOBBY -->
+  <div id="s-lobby" class="screen">
+    <div class="lobby-brand">
+      <div class="float crown-lg">👑</div>
+      <h1 class="brand-title">KAD KINGS</h1>
+      <p class="brand-subtitle">THE DRINKING CARD GAME</p>
+    </div>
 
-<button id="btn-drink">Test Drink</button>
-<button id="btn-next">Next Turn</button>
-<button id="btn-heaven">Heaven</button>
-<button id="btn-thumb">Thumb</button>
+    <div class="panel lobby-panel">
+      <input id="i-name" class="inp" placeholder="Your name">
+      <button id="b-create" class="btn btn-ac full-btn">CREATE ROOM</button>
+
+      <div class="divider">
+        <div></div>
+        <span>OR JOIN</span>
+        <div></div>
+      </div>
+
+      <div class="join-row">
+        <input id="i-code" class="inp join-code" placeholder="CODE" maxlength="5">
+        <button id="b-join" class="btn btn-s">JOIN</button>
+      </div>
+
+      <div id="lobby-status" class="lobby-status"></div>
+    </div>
+  </div>
+
+  <!-- WAITING -->
+  <div id="s-wait" class="screen hidden">
+    <div class="float crown-md">👑</div>
+    <h2 class="wait-title">WAITING ROOM</h2>
+
+    <div class="panel room-code-panel">
+      <p class="room-code-label">ROOM CODE</p>
+      <span id="w-code" class="room-code-value"></span>
+    </div>
+
+    <div class="wait-actions">
+      <button id="b-invite" class="btn btn-s wait-action-btn">📤 Invite</button>
+      <button id="b-fs" class="btn btn-dark wait-action-btn">⛶ Full</button>
+    </div>
+
+    <div id="w-status" class="wait-status"></div>
+
+    <div class="panel wait-players-panel">
+      <p class="wait-players-title">👥 PLAYERS</p>
+      <div id="w-players"></div>
+    </div>
+
+    <button id="b-start" class="btn btn-ac">NEED 2+ PLAYERS</button>
+    <div class="small-note wait-note">Solo start is allowed for testing.</div>
+  </div>
+
+  <!-- GAME -->
+  <div id="s-game" class="hidden game-screen">
+    <!-- top strip -->
+    <div class="top-row">
+      <span class="top-crown">👑</span>
+      <div id="vid-strip" class="vid-strip"></div>
+      <div id="vid-ctrl-mini" class="vid-ctrl-mini">
+        <button id="b-cam" class="btn btn-s cam-btn">📹</button>
+      </div>
+      <div id="g-conn" class="status-bar game-conn"></div>
+    </div>
+
+    <!-- info strip -->
+    <div id="g-info" class="info-row">
+      <span id="g-deck" class="chip"></span>
+      <span id="g-kings" class="chip"></span>
+      <div id="g-scores" class="score-strip"></div>
+      <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
+    </div>
+
+    <!-- active powers -->
+    <div id="g-power-bar" class="power-bar hidden"></div>
+
+    <!-- mates + rules -->
+    <div id="g-extra" class="extra-row"></div>
+
+    <!-- main -->
+    <div id="g-main" class="main-stage"></div>
+
+    <!-- player grid -->
+    <div id="g-players-grid" class="players-grid"></div>
+
+    <!-- powers buttons -->
+    <div id="g-powers" class="powers-wrap hidden">
+      <div id="g-pw-list" class="powers-list"></div>
+    </div>
+
+    <!-- hidden targets -->
+    <div class="hidden">
+      <div id="g-players"></div>
+      <div id="g-mates-sec"></div>
+      <div id="g-mates"></div>
+      <div id="g-rules"></div>
+      <div id="g-rules-list"></div>
+      <div id="g-hist"></div>
+    </div>
+  </div>
+
+  <!-- INVITE MODAL -->
+  <div id="m-invite" class="ov hidden">
+    <div class="panel modal-card">
+      <div class="modal-icon">📤</div>
+      <h3 class="modal-title">Invite Friends</h3>
+      <p class="modal-text">Share this room code:</p>
+      <div class="invite-code-box">
+        <span id="m-code" class="invite-code"></span>
+      </div>
+      <button id="b-copy" class="btn btn-s">📋 Copy Invite</button>
+      <button id="b-close-invite" class="modal-close">Close</button>
+    </div>
+  </div>
+
+  <!-- REACTION OVERLAY -->
+  <div id="ov-react" class="ov hidden">
+    <div id="r-icon" class="reaction-icon"></div>
+    <h2 id="r-title" class="reaction-title"></h2>
+    <p id="r-by" class="reaction-by"></p>
+
+    <div class="progress-track">
+      <div id="r-bar" class="progress-fill progress-ac"></div>
+    </div>
+
+    <div id="r-tap-area">
+      <button id="r-tap" class="tap-btn">TAP!</button>
+    </div>
+
+    <div id="r-done" class="hidden reaction-done">
+      <div class="reaction-done-icon">✅</div>
+      <p class="reaction-done-text">Tapped!</p>
+    </div>
+
+    <p id="r-time" class="reaction-time"></p>
+  </div>
+
+  <!-- RESULTS OVERLAY -->
+  <div id="ov-results" class="ov hidden">
+    <h2 class="results-title">RESULTS</h2>
+    <div id="res-list" class="results-list"></div>
+    <p id="res-loser" class="results-loser"></p>
+    <button id="b-res-ok" class="btn btn-s">Continue</button>
+  </div>
+
+  <!-- PICK OVERLAY -->
+  <div id="ov-pick" class="ov hidden">
+    <div id="pk-icon" class="pick-icon"></div>
+    <h2 id="pk-title" class="pick-title"></h2>
+    <p id="pk-label" class="pick-label"></p>
+    <div id="pk-btns" class="pick-buttons"></div>
+  </div>
+
+  <!-- TIMER OVERLAY -->
+  <div id="ov-timer" class="ov hidden">
+    <div id="tm-icon" class="timer-icon"></div>
+    <h2 id="tm-title" class="timer-title"></h2>
+    <p id="tm-desc" class="timer-desc"></p>
+    <div id="tm-clock" class="timer-clock">30</div>
+
+    <div class="progress-track progress-track-timer">
+      <div id="tm-bar" class="progress-fill progress-gd"></div>
+    </div>
+
+    <p class="timer-help">When someone fails, tap their name:</p>
+    <div id="tm-players" class="timer-players"></div>
+    <button id="tm-skip" class="timer-skip-btn">Skip (no one failed)</button>
+  </div>
+
+  <!-- DRINK FX -->
+  <div id="ov-drink" class="you-drink hidden">
+    <div class="yd-inner" id="yd-text">YOU DRINK<br>🍺 +1</div>
+  </div>
+
+  <!-- PeerJS first -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

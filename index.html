@@ -9,7 +9,6 @@
 </head>
 <body>
 
-  <!-- LOBBY -->
   <div id="s-lobby" class="screen">
     <div class="lobby-brand">
       <div class="float crown-lg">👑</div>
@@ -36,7 +35,6 @@
     </div>
   </div>
 
-  <!-- WAITING -->
   <div id="s-wait" class="screen hidden">
     <div class="float crown-md">👑</div>
     <h2 class="wait-title">WAITING ROOM</h2>
@@ -62,9 +60,7 @@
     <div class="small-note wait-note">Solo start is allowed for testing.</div>
   </div>
 
-  <!-- GAME -->
   <div id="s-game" class="hidden game-screen">
-    <!-- top strip -->
     <div class="top-row">
       <span class="top-crown">👑</span>
       <div id="vid-strip" class="vid-strip"></div>
@@ -74,7 +70,6 @@
       <div id="g-conn" class="status-bar game-conn"></div>
     </div>
 
-    <!-- info strip -->
     <div id="g-info" class="info-row">
       <span id="g-deck" class="chip"></span>
       <span id="g-kings" class="chip"></span>
@@ -82,24 +77,18 @@
       <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
     </div>
 
-    <!-- active powers -->
     <div id="g-power-bar" class="power-bar hidden"></div>
-
-    <!-- mates + rules -->
     <div id="g-extra" class="extra-row"></div>
 
-    <!-- main -->
+    <!-- MOVED UP -->
+    <div id="g-players-grid" class="players-strip"></div>
+
     <div id="g-main" class="main-stage"></div>
 
-    <!-- player grid -->
-    <div id="g-players-grid" class="players-grid"></div>
-
-    <!-- powers buttons -->
     <div id="g-powers" class="powers-wrap hidden">
       <div id="g-pw-list" class="powers-list"></div>
     </div>
 
-    <!-- hidden targets -->
     <div class="hidden">
       <div id="g-players"></div>
       <div id="g-mates-sec"></div>
@@ -110,7 +99,6 @@
     </div>
   </div>
 
-  <!-- INVITE MODAL -->
   <div id="m-invite" class="ov hidden">
     <div class="panel modal-card">
       <div class="modal-icon">📤</div>
@@ -124,7 +112,6 @@
     </div>
   </div>
 
-  <!-- REACTION OVERLAY -->
   <div id="ov-react" class="ov hidden">
     <div id="r-icon" class="reaction-icon"></div>
     <h2 id="r-title" class="reaction-title"></h2>
@@ -146,7 +133,6 @@
     <p id="r-time" class="reaction-time"></p>
   </div>
 
-  <!-- RESULTS OVERLAY -->
   <div id="ov-results" class="ov hidden">
     <h2 class="results-title">RESULTS</h2>
     <div id="res-list" class="results-list"></div>
@@ -154,7 +140,6 @@
     <button id="b-res-ok" class="btn btn-s">Continue</button>
   </div>
 
-  <!-- PICK OVERLAY -->
   <div id="ov-pick" class="ov hidden">
     <div id="pk-icon" class="pick-icon"></div>
     <h2 id="pk-title" class="pick-title"></h2>
@@ -162,7 +147,6 @@
     <div id="pk-btns" class="pick-buttons"></div>
   </div>
 
-  <!-- TIMER OVERLAY -->
   <div id="ov-timer" class="ov hidden">
     <div id="tm-icon" class="timer-icon"></div>
     <h2 id="tm-title" class="timer-title"></h2>
@@ -178,12 +162,10 @@
     <button id="tm-skip" class="timer-skip-btn">Skip (no one failed)</button>
   </div>
 
-  <!-- DRINK FX -->
   <div id="ov-drink" class="you-drink hidden">
     <div class="yd-inner" id="yd-text">YOU DRINK<br>🍺 +1</div>
   </div>
 
-  <!-- PeerJS first -->
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="app.js"></script>
 </body>

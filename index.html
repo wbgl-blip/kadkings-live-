@@ -2,112 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+  >
   <title>KAD KINGS</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Nunito+Sans:wght@400;600;700;800&display=swap"
+    rel="stylesheet"
+  >
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <!-- LOBBY -->
-  <div id="s-lobby" class="screen">
-    <div class="lobby-brand">
-      <img src="logo.png" class="brand-logo float" alt="KAD Kings logo">
-      <h1 class="brand-title">KAD KINGS</h1>
-      <p class="brand-subtitle">THE DRINKING CARD GAME</p>
-    </div>
-
-    <div class="panel lobby-panel">
-      <input id="i-name" class="inp" placeholder="Your name">
-
-      <button id="b-create" class="btn btn-ac full-btn">CREATE ROOM</button>
-
-      <div class="divider">
-        <div></div>
-        <span>OR JOIN</span>
-        <div></div>
+  <div id="s-lobby" class="screen screen-center">
+    <div class="lobby-shell">
+      <div class="lobby-brand">
+        <img src="logo.png" class="brand-logo float" alt="KAD Kings logo">
+        <h1 class="brand-title">KAD KINGS</h1>
+        <p class="brand-subtitle">THE DRINKING CARD GAME</p>
       </div>
 
-      <div class="join-row">
-        <input id="i-code" class="inp join-code" placeholder="CODE" maxlength="5">
-        <button id="b-join" class="btn btn-s">JOIN</button>
-      </div>
+      <div class="panel lobby-panel">
+        <input id="i-name" class="inp" placeholder="Your name" autocomplete="name">
+        <button id="b-create" class="btn btn-ac full-btn">CREATE ROOM</button>
 
-      <div id="lobby-status" class="lobby-status"></div>
+        <div class="divider">
+          <div></div>
+          <span>OR JOIN</span>
+          <div></div>
+        </div>
+
+        <div class="join-row">
+          <input id="i-code" class="inp join-code" placeholder="CODE" maxlength="5" autocomplete="off">
+          <button id="b-join" class="btn btn-s">JOIN</button>
+        </div>
+
+        <div id="lobby-status" class="lobby-status"></div>
+      </div>
     </div>
   </div>
 
-  <!-- WAITING -->
-  <div id="s-wait" class="screen hidden">
-    <div class="float crown-md">👑</div>
-    <h2 class="wait-title">WAITING ROOM</h2>
+  <!-- WAITING ROOM -->
+  <div id="s-wait" class="screen screen-center hidden">
+    <div class="wait-shell">
+      <div class="wait-brand">
+        <img src="logo.png" class="brand-logo brand-logo-sm float" alt="KAD Kings logo">
+        <h2 class="wait-title">WAITING ROOM</h2>
+      </div>
 
-    <div class="panel room-code-panel">
-      <p class="room-code-label">ROOM CODE</p>
-      <span id="w-code" class="room-code-value"></span>
+      <div class="panel room-code-panel">
+        <p class="room-code-label">ROOM CODE</p>
+        <span id="w-code" class="room-code-value"></span>
+      </div>
+
+      <div class="wait-actions">
+        <button id="b-invite" class="btn btn-s wait-action-btn">📤 Invite</button>
+        <button id="b-fs" class="btn btn-dark wait-action-btn">⛶ Full</button>
+      </div>
+
+      <div id="w-status" class="wait-status"></div>
+
+      <div class="panel wait-players-panel">
+        <p class="wait-players-title">👥 PLAYERS</p>
+        <div id="w-players"></div>
+      </div>
+
+      <button id="b-start" class="btn btn-ac">NEED 2+ PLAYERS</button>
+      <div class="small-note wait-note">Solo start is allowed for testing.</div>
     </div>
-
-    <div class="wait-actions">
-      <button id="b-invite" class="btn btn-s wait-action-btn">📤 Invite</button>
-      <button id="b-fs" class="btn btn-dark wait-action-btn">⛶ Full</button>
-    </div>
-
-    <div id="w-status" class="wait-status"></div>
-
-    <div class="panel wait-players-panel">
-      <p class="wait-players-title">👥 PLAYERS</p>
-      <div id="w-players"></div>
-    </div>
-
-    <button id="b-start" class="btn btn-ac">NEED 2+ PLAYERS</button>
-    <div class="small-note wait-note">Solo start is allowed for testing.</div>
   </div>
 
   <!-- GAME -->
   <div id="s-game" class="hidden game-screen">
-    <!-- Top HUD row -->
-    <div class="hud-top-row">
-      <span class="top-crown">👑</span>
 
-      <div id="g-conn" class="status-bar game-conn"></div>
-
-      <div id="vid-ctrl-mini" class="vid-ctrl-mini">
-        <button id="b-cam" class="btn btn-s cam-btn">📹</button>
+    <!-- top status / controls -->
+    <div class="game-topbar">
+      <div class="game-topbar-left">
+        <span class="top-crown">👑</span>
       </div>
 
-      <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
+      <div class="game-topbar-right">
+        <div id="g-conn" class="status-bar game-conn"></div>
+
+        <div class="top-actions">
+          <div id="vid-ctrl-mini" class="vid-ctrl-mini">
+            <button id="b-cam" class="btn btn-s cam-btn">📹</button>
+          </div>
+
+          <button id="b-inv2" class="btn btn-s invite-mini">📤</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Stats row -->
+    <!-- chips -->
     <div id="g-info" class="info-row">
       <span id="g-deck" class="chip"></span>
       <span id="g-kings" class="chip"></span>
       <div id="g-scores" class="score-strip"></div>
     </div>
 
-    <!-- Global powers -->
+    <!-- active powers -->
     <div id="g-power-bar" class="power-bar hidden"></div>
 
-    <!-- Rules / mates -->
+    <!-- rules / mates -->
     <div id="g-extra" class="extra-row"></div>
 
-    <!-- Player mini cards -->
+    <!-- player summary cards -->
     <div id="g-players-grid" class="players-strip"></div>
 
-    <!-- Main arena -->
-    <div id="g-main" class="main-stage">
-      <div class="arena-wrap">
-        <div id="vid-strip" class="vid-strip"></div>
-      </div>
-    </div>
+    <!-- main stage -->
+    <div id="g-main" class="main-stage"></div>
 
-    <!-- My usable powers -->
+    <!-- my powers -->
     <div id="g-powers" class="powers-wrap hidden">
       <div id="g-pw-list" class="powers-list"></div>
     </div>
 
-    <!-- Hidden legacy targets kept so app.js won't break -->
+    <!-- hidden legacy hooks so app.js never breaks -->
     <div class="hidden">
+      <div id="vid-strip" class="vid-strip"></div>
       <div id="g-players"></div>
       <div id="g-mates-sec"></div>
       <div id="g-mates"></div>
@@ -155,7 +170,7 @@
     <p id="r-time" class="reaction-time"></p>
   </div>
 
-  <!-- RESULTS OVERLAY -->
+  <!-- REACTION RESULTS -->
   <div id="ov-results" class="ov hidden">
     <h2 class="results-title">RESULTS</h2>
     <div id="res-list" class="results-list"></div>
@@ -163,7 +178,7 @@
     <button id="b-res-ok" class="btn btn-s">Continue</button>
   </div>
 
-  <!-- PICK OVERLAY -->
+  <!-- PICK PLAYER -->
   <div id="ov-pick" class="ov hidden">
     <div id="pk-icon" class="pick-icon"></div>
     <h2 id="pk-title" class="pick-title"></h2>
@@ -171,7 +186,7 @@
     <div id="pk-btns" class="pick-buttons"></div>
   </div>
 
-  <!-- TIMER OVERLAY -->
+  <!-- TIMER ROUND -->
   <div id="ov-timer" class="ov hidden">
     <div id="tm-icon" class="timer-icon"></div>
     <h2 id="tm-title" class="timer-title"></h2>
@@ -187,12 +202,11 @@
     <button id="tm-skip" class="timer-skip-btn">Skip (no one failed)</button>
   </div>
 
-  <!-- DRINK OVERLAY -->
+  <!-- YOU DRINK -->
   <div id="ov-drink" class="you-drink hidden">
     <div class="yd-inner" id="yd-text">YOU DRINK<br>🍺 +1</div>
   </div>
 
-  <!-- SCRIPTS -->
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="app.js"></script>
 </body>

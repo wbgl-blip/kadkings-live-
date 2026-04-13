@@ -8,57 +8,42 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div id="fx-drink-flash" class="drink-flash hidden"></div>
 
-  <div id="s-splash">
+  <div id="s-splash" class="screen splash-screen">
     <div class="splash-logo-wrap">
       <img
         src="logo.png"
         alt="KAD Kings logo"
         class="splash-logo"
-        onerror="this.style.display='none';document.getElementById('splash-fallback').classList.remove('hidden')"
+        onerror="this.style.display='none';document.getElementById('fallback-crown').style.display='block';"
       >
-      <div id="splash-fallback" class="splash-fallback hidden">KAD KINGS</div>
+      <div id="fallback-crown" class="fallback-crown hidden">👑</div>
     </div>
-    <div class="splash-sub">THE DRINKING CARD GAME</div>
+    <h1 class="splash-title">KAD KINGS</h1>
+    <p class="splash-sub">PARTY HARD • ROCK ON</p>
   </div>
 
-  <div class="lobby-stage">
-    <div class="lobby-bg"></div>
-    <div class="lobby-logo-bg"></div>
-    <div class="lobby-vignette"></div>
-  </div>
-
-  <div id="s-lobby" class="screen layer-screen hidden">
-    <div class="brand-hero">
-      <img
-        src="logo.png"
-        alt="KAD Kings"
-        class="brand-logo"
-        onerror="this.style.display='none';document.getElementById('brand-fallback').classList.remove('hidden')"
-      >
-      <div id="brand-fallback" class="brand-logo-fallback hidden">
-        <h1>KAD KINGS</h1>
-        <p>THE DRINKING CARD GAME</p>
-      </div>
+  <div id="s-lobby" class="screen hidden">
+    <div class="lobby-brand">
+      <div class="float lobby-crown">👑</div>
+      <h1 class="lobby-title">KAD KINGS</h1>
+      <p class="lobby-sub">THE DRINKING CARD GAME</p>
     </div>
 
-    <div class="panel lobby-card">
-      <input id="i-name" class="inp lobby-name-input" placeholder="Your name">
-      <button id="b-create" class="btn btn-ac lobby-create-btn">CREATE ROOM</button>
+    <div class="panel lobby-panel">
+      <input id="i-name" class="inp" placeholder="Your name" autocomplete="off">
+
+      <button id="b-create" class="btn btn-ac lobby-main-btn">CREATE ROOM</button>
 
       <div class="lobby-divider">
-        <div class="lobby-divider-line"></div>
-        <span class="lobby-divider-text">OR JOIN</span>
-        <div class="lobby-divider-line"></div>
+        <div></div>
+        <span>OR JOIN</span>
+        <div></div>
       </div>
 
-      <div class="lobby-join-row">
-        <input
-          id="i-code"
-          class="inp lobby-code-input"
-          placeholder="CODE"
-          maxlength="5"
-        >
+      <div class="join-row">
+        <input id="i-code" class="inp code-inp" placeholder="CODE" maxlength="5" autocomplete="off">
         <button id="b-join" class="btn btn-s">JOIN</button>
       </div>
 
@@ -66,60 +51,60 @@
     </div>
   </div>
 
-  <div id="s-wait" class="screen layer-screen hidden">
-    <div class="wait-brand">
-      <img src="logo.png" alt="KAD Kings" onerror="this.style.display='none'">
-    </div>
-
+  <div id="s-wait" class="screen hidden">
     <div class="float wait-crown">👑</div>
     <h2 class="wait-title">WAITING ROOM</h2>
 
-    <div class="panel wait-room-code-card">
-      <p class="wait-room-code-label">ROOM CODE</p>
-      <span id="w-code" class="wait-room-code-value"></span>
+    <div class="panel wait-code-panel">
+      <p class="wait-code-label">ROOM CODE</p>
+      <span id="w-code" class="wait-code"></span>
     </div>
 
-    <div class="wait-actions-row">
+    <div class="wait-actions">
       <button id="b-invite" class="btn btn-s wait-action-btn">📤 Invite</button>
-      <button id="b-fs" class="btn btn-dark wait-fullscreen-btn">⛶ Full</button>
+      <button id="b-fs" class="btn btn-dark wait-action-btn">⛶ Full</button>
     </div>
 
     <div id="w-status" class="wait-status"></div>
 
-    <div class="panel wait-players-card">
-      <p class="wait-players-label">👥 PLAYERS</p>
+    <div class="panel wait-players-panel">
+      <p class="wait-players-title">👥 PLAYERS</p>
       <div id="w-players"></div>
     </div>
 
-    <button id="b-start" class="btn btn-ac" disabled>NEED 2+ PLAYERS</button>
-    <div class="small-note wait-solo-note">Solo start is allowed for testing.</div>
+    <button id="b-start" class="btn btn-ac wait-start-btn" disabled>NEED 2+ PLAYERS</button>
+    <div class="small-note wait-note">Solo start is allowed for testing.</div>
   </div>
 
-  <div id="s-game" class="game-screen hidden">
-    <div class="game-top-row">
-      <span class="game-top-crown">👑</span>
-      <div id="vid-strip" class="vid-strip game-vid-strip"></div>
+  <div id="s-game" class="hidden game-screen">
+    <div class="game-topbar">
+      <div class="game-top-left">👑</div>
 
-      <div id="vid-ctrl-mini" class="game-video-controls">
-        <button id="b-cam" class="btn btn-s game-cam-btn">📹</button>
+      <div id="vid-strip" class="vid-strip"></div>
+
+      <div id="vid-ctrl-mini" class="vid-ctrl-mini">
+        <button id="b-cam" class="btn btn-s cam-btn">📹</button>
       </div>
 
-      <div id="g-conn" class="status-bar game-conn-bar"></div>
+      <div id="g-conn" class="status-bar game-conn"></div>
     </div>
 
-    <div id="g-info" class="game-info-row">
-      <span id="g-deck" class="chip"></span>
-      <span id="g-kings" class="chip"></span>
-      <div id="g-scores" class="game-scores-row"></div>
-      <button id="b-inv2" class="btn btn-s game-invite-mini-btn">📤</button>
+    <div class="game-hud-row">
+      <span id="g-deck" class="chip hud-chip"></span>
+      <span id="g-kings" class="chip hud-chip"></span>
+      <div id="g-scores" class="g-scores"></div>
+      <button id="b-inv2" class="btn btn-s hud-invite-btn">📤</button>
     </div>
 
-    <div id="g-extra" class="game-extra-row"></div>
+    <div id="g-active-powers" class="active-powers-row"></div>
+    <div id="g-extra" class="extra-row"></div>
 
     <div id="g-main" class="game-main"></div>
 
-    <div id="g-powers" class="game-powers-row">
-      <div id="g-pw-list" class="game-powers-list"></div>
+    <div id="g-bottom-actions" class="game-bottom-actions">
+      <div id="g-powers" class="g-powers hidden">
+        <div id="g-pw-list" class="g-pw-list"></div>
+      </div>
     </div>
 
     <div class="hidden">
@@ -132,41 +117,38 @@
     </div>
   </div>
 
-  <div id="m-invite" class="ov hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="panel invite-modal-card">
+  <div id="m-invite" class="ov hidden">
+    <div class="panel invite-panel">
       <div class="invite-icon">📤</div>
       <h3 class="invite-title">Invite Friends</h3>
       <p class="invite-copy">Share this room code:</p>
-
-      <div class="invite-code-box">
-        <span id="m-code" class="invite-code-value"></span>
+      <div class="invite-code-wrap">
+        <span id="m-code" class="invite-code"></span>
       </div>
-
       <button id="b-copy" class="btn btn-s">📋 Copy Invite</button>
-      <br>
-      <button id="b-close-invite" class="invite-close-btn">Close</button>
+      <button id="b-close-invite" class="modal-close-btn">Close</button>
     </div>
   </div>
 
   <div id="ov-react" class="ov hidden">
-    <div id="r-icon" class="reaction-icon"></div>
-    <h2 id="r-title" class="reaction-title"></h2>
-    <p id="r-by" class="reaction-by"></p>
+    <div id="r-icon" class="react-icon"></div>
+    <h2 id="r-title" class="react-title"></h2>
+    <p id="r-by" class="react-by"></p>
 
-    <div class="progress-track progress-track-reaction">
-      <div id="r-bar" class="progress-fill progress-fill-accent progress-fill-fast"></div>
+    <div class="progress-track">
+      <div id="r-bar" class="progress-fill progress-fill-ac"></div>
     </div>
 
     <div id="r-tap-area">
-      <button id="r-tap" class="reaction-tap-btn">TAP!</button>
+      <button id="r-tap" class="react-tap-btn">TAP!</button>
     </div>
 
-    <div id="r-done" class="hidden reaction-done">
-      <div class="reaction-done-icon">✅</div>
-      <p class="reaction-done-text">Tapped!</p>
+    <div id="r-done" class="hidden react-done">
+      <div class="react-done-icon">✅</div>
+      <p class="react-done-text">Tapped!</p>
     </div>
 
-    <p id="r-time" class="reaction-time"></p>
+    <p id="r-time" class="react-time"></p>
   </div>
 
   <div id="ov-results" class="ov hidden">
@@ -191,7 +173,7 @@
     <div id="tm-clock" class="timer-clock">30</div>
 
     <div class="progress-track progress-track-timer">
-      <div id="tm-bar" class="progress-fill progress-fill-gold progress-fill-medium"></div>
+      <div id="tm-bar" class="progress-fill progress-fill-gd"></div>
     </div>
 
     <p class="timer-help">When someone fails, tap their name:</p>
@@ -203,6 +185,7 @@
     <div class="yd-inner" id="yd-text">YOU DRINK<br>🍺 +1</div>
   </div>
 
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1427,3 +1427,21 @@ img{
     padding:12px;
   }
   }
+/* ===== FIX CLICK BLOCKING ===== */
+
+/* make everything ignore touches by default */
+.arena-wrap{
+  pointer-events:none;
+}
+
+/* allow ONLY the card to be clickable */
+.card-w,
+.card-w *{
+  pointer-events:auto;
+}
+
+/* make sure card is on top */
+.card-w{
+  position:relative;
+  z-index:50;
+}

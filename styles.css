@@ -14,6 +14,14 @@
   --fm:'IBM Plex Mono','Courier New',monospace;
   --fb:'Nunito Sans','Helvetica Neue',sans-serif
 }
+.brand-logo{
+  width:120px;
+  height:auto;
+  margin-bottom:12px;
+  filter:
+    drop-shadow(0 0 25px rgba(240,192,64,.35))
+    drop-shadow(0 0 60px rgba(238,90,111,.25));
+}
 
 html,body{
   height:100%;

@@ -76,10 +76,12 @@
       e.preventDefault();
       fn(e);
     };
+
     el.ontouchend = (e) => {
       e.preventDefault();
       fn(e);
     };
+
     el.onpointerup = (e) => {
       e.preventDefault();
       fn(e);
@@ -111,7 +113,9 @@
       $("ov-drink")?.classList.remove("hidden");
 
       if (navigator.vibrate) {
-        try { navigator.vibrate([120, 70, 120]); } catch {}
+        try {
+          navigator.vibrate([120, 70, 120]);
+        } catch {}
       }
 
       clearTimeout(APP.state.timers.drinkOverlay);
@@ -140,7 +144,9 @@
       ta.style.cssText = "position:fixed;left:-9999px";
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand("copy"); } catch {}
+      try {
+        document.execCommand("copy");
+      } catch {}
       document.body.removeChild(ta);
     }
   };
@@ -206,14 +212,16 @@
     normalizeMates() {
       const gs = APP.state.gs;
       if (!gs) return;
-      gs.mates = gs.mates.filter((pair) =>
-        Array.isArray(pair) &&
-        pair.length === 2 &&
-        pair[0] &&
-        pair[1] &&
-        pair[0] !== pair[1] &&
-        gs.players.includes(pair[0]) &&
-        gs.players.includes(pair[1])
+
+      gs.mates = gs.mates.filter(
+        (pair) =>
+          Array.isArray(pair) &&
+          pair.length === 2 &&
+          pair[0] &&
+          pair[1] &&
+          pair[0] !== pair[1] &&
+          gs.players.includes(pair[0]) &&
+          gs.players.includes(pair[1])
       );
     },
 
@@ -317,7 +325,9 @@
           p.on("disconnected", () => {
             if (!p.destroyed) {
               setTimeout(() => {
-                try { p.reconnect(); } catch {}
+                try {
+                  p.reconnect();
+                } catch {}
               }, 1500);
             }
           });
@@ -413,6 +423,7 @@
       const strip = Video.getStrip();
       const arena = document.querySelector(".arena-wrap");
       if (!strip || !arena) return;
+
       if (strip.parentElement !== arena) {
         arena.appendChild(strip);
       }
@@ -466,7 +477,9 @@
         if (!pc) return;
         pc.oniceconnectionstatechange = () => {
           if (pc.iceConnectionState === "failed") {
-            try { pc.restartIce(); } catch {}
+            try {
+              pc.restartIce();
+            } catch {}
           }
         };
       };
@@ -528,14 +541,18 @@
 
       bindTap($("b-togc"), () => {
         const tracks = APP.state.localStream?.getVideoTracks() || [];
-        tracks.forEach((t) => { t.enabled = !t.enabled; });
+        tracks.forEach((t) => {
+          t.enabled = !t.enabled;
+        });
         APP.state.camOn = !APP.state.camOn;
         Video.renderControls(true);
       });
 
       bindTap($("b-togm"), () => {
         const tracks = APP.state.localStream?.getAudioTracks() || [];
-        tracks.forEach((t) => { t.enabled = !t.enabled; });
+        tracks.forEach((t) => {
+          t.enabled = !t.enabled;
+        });
         APP.state.micOn = !APP.state.micOn;
         Video.renderControls(true);
       });
@@ -705,7 +722,12 @@
 
       if (a.a === "timerfail") {
         Game.addDrink(a.loser, 1);
-        Game.addHistory({ type: "timer", card: gs.timerCard, loser: a.loser, by: gs.players[gs.turn] });
+        Game.addHistory({
+          type: "timer",
+          card: gs.timerCard,
+          loser: a.loser,
+          by: gs.players[gs.turn]
+        });
         gs.phase = "shown";
         gs.timerStart = null;
         gs.timerCard = null;
@@ -764,11 +786,18 @@
       const gs = APP.state.gs;
       if (!gs) return;
 
-      UI.setHTML("w-players", gs.players.map((p) => `
+      UI.setHTML(
+        "w-players",
+        gs.players
+          .map(
+            (p) => `
         <div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px">
           ${p}${p === APP.state.me ? ' <span style="color:var(--mt);font-size:9px">(you)</span>' : ""}
         </div>
-      `).join(""));
+      `
+          )
+          .join("")
+      );
 
       const b = $("b-start");
       if (!b) return;
@@ -785,13 +814,18 @@
       const connected = linked > 0 || players > 1;
       const statusText = connected
         ? `${players > 1 ? players : linked} ${players > 1 ? "players" : "linked"}`
-        : APP.state.peer ? "waiting" : "offline";
+        : APP.state.peer
+          ? "waiting"
+          : "offline";
 
       const dotColor = connected ? "#4ade80" : APP.state.peer ? "var(--gd)" : "var(--ac)";
       const html = `<div class="status-dot" style="background:${dotColor}"></div><span style="color:var(--tx)">${statusText}</span>`;
 
       UI.setHTML("g-conn", html);
-      UI.setHTML("w-status", `<div class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:4px 10px">${html}</div>`);
+      UI.setHTML(
+        "w-status",
+        `<div class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:4px 10px">${html}</div>`
+      );
     },
 
     renderGame() {
@@ -801,12 +835,19 @@
       UI.setText("g-deck", `${gs.deck.length} left`);
       UI.setText("g-kings", `👑 ${gs.kc}/4`);
 
-      UI.setHTML("g-scores", gs.players.map((p, i) => `
+      UI.setHTML(
+        "g-scores",
+        gs.players
+          .map(
+            (p, i) => `
         <div style="display:flex;align-items:center;gap:2px;padding:2px 6px;border-radius:6px;background:${i === gs.turn ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.04)"};border:1px solid ${i === gs.turn ? "rgba(238,90,111,.18)" : "rgba(255,255,255,.06)"};flex-shrink:0" class="${i === gs.turn ? "turn-pulse" : ""}">
           <span style="font-size:8px;color:var(--tx)">${p.slice(0, 4)}</span>
           <span style="font-family:var(--fm);font-size:8px;color:var(--ac)">🍺${gs.drinks[p] || 0}</span>
         </div>
-      `).join(""));
+      `
+          )
+          .join("")
+      );
 
       const powerPills = [];
       if (gs.powers.heaven) powerPills.push(`<span class="power-pill">☝️ Heaven: ${gs.powers.heaven}</span>`);
@@ -826,7 +867,9 @@
         extra.push(`<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">🤝 ${from}→${to}</span>`);
       });
       gs.rules.forEach((rule) => {
-        extra.push(`<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">📜 ${rule.length > 18 ? `${rule.slice(0, 18)}…` : rule}</span>`);
+        extra.push(
+          `<span class="chip" style="color:var(--gd);border-color:rgba(240,192,64,.16)">📜 ${rule.length > 18 ? `${rule.slice(0, 18)}…` : rule}</span>`
+        );
       });
 
       UI.setHTML("g-extra", extra.join(""));
@@ -841,18 +884,21 @@
       const gs = APP.state.gs;
       if (!gs) return;
 
-      UI.setHTML("g-players-grid", gs.players.map((p, i) => {
-        const isTurn = gs.turn === i;
-        const badges = [];
+      UI.setHTML(
+        "g-players-grid",
+        gs.players
+          .map((p, i) => {
+            const isTurn = gs.turn === i;
+            const badges = [];
 
-        if (gs.powers.heaven === p) badges.push(`<span class="mate-badge">☝️ Heaven</span>`);
-        if (gs.powers.thumbmaster === p) badges.push(`<span class="mate-badge">👍 Thumb</span>`);
-        if (gs.powers.questionmaster === p) badges.push(`<span class="mate-badge">❓ Questions</span>`);
+            if (gs.powers.heaven === p) badges.push(`<span class="mate-badge">☝️ Heaven</span>`);
+            if (gs.powers.thumbmaster === p) badges.push(`<span class="mate-badge">👍 Thumb</span>`);
+            if (gs.powers.questionmaster === p) badges.push(`<span class="mate-badge">❓ Questions</span>`);
 
-        const mateTargets = gs.mates.filter((m) => m[0] === p).map((m) => m[1]);
-        mateTargets.forEach((t) => badges.push(`<span class="mate-badge">🤝 ${t}</span>`));
+            const mateTargets = gs.mates.filter((m) => m[0] === p).map((m) => m[1]);
+            mateTargets.forEach((t) => badges.push(`<span class="mate-badge">🤝 ${t}</span>`));
 
-        return `
+            return `
           <div class="player-tile ${isTurn ? "turn" : ""}">
             <div class="player-top">
               <div class="player-dot"></div>
@@ -865,7 +911,9 @@
             </div>
           </div>
         `;
-      }).join(""));
+          })
+          .join("")
+      );
     },
 
     renderMain() {
@@ -882,13 +930,17 @@
               <div style="font-size:62px;margin-bottom:8px;">🍺</div>
               <h2 style="font-family:var(--fd);color:var(--ac);font-size:28px;margin-bottom:14px;">GAME OVER</h2>
               <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-                ${sorted.map((p, i) => `
+                ${sorted
+                  .map(
+                    (p, i) => `
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:14px;background:${i === 0 ? "rgba(238,90,111,.12)" : "rgba(255,255,255,.03)"};border:1px solid ${i === 0 ? "rgba(238,90,111,.22)" : "rgba(255,255,255,.06)"};">
                     <span style="font-family:var(--fm);color:${i === 0 ? "var(--ac)" : "var(--mt)"};font-size:13px;">#${i + 1}</span>
                     <span style="flex:1;text-align:center;color:var(--tx);font-size:15px;font-weight:700;">${p}</span>
                     <span class="drink-badge" style="font-size:11px">🍺 ${gs.drinks[p] || 0}</span>
                   </div>
-                `).join("")}
+                `
+                  )
+                  .join("")}
               </div>
               <p style="color:var(--ac);font-size:16px;margin-bottom:18px;">🏆 ${sorted[0]} drank the most!</p>
               <button class="btn btn-gd" id="b-reset" style="padding:14px 30px;font-size:15px;">PLAY AGAIN</button>
@@ -939,9 +991,12 @@
       if (gs.phase === "idle") {
         html += `
           <div style="display:flex;gap:2px;margin-bottom:4px;justify-content:center;">
-            ${Array.from({ length: Math.min(20, Math.ceil(Math.max(gs.deck.length, 1) / 2.6)) }).map((_, i) =>
-              `<div style="width:2px;height:8px;border-radius:1px;background:var(--ac);opacity:${0.1 + i * 0.04}"></div>`
-            ).join("")}
+            ${Array.from({ length: Math.min(20, Math.ceil(Math.max(gs.deck.length, 1) / 2.6)) })
+              .map(
+                (_, i) =>
+                  `<div style="width:2px;height:8px;border-radius:1px;background:var(--ac);opacity:${0.1 + i * 0.04}"></div>`
+              )
+              .join("")}
           </div>
         `;
       }
@@ -1017,12 +1072,14 @@
       }
 
       if ($("b-next")) bindTap($("b-next"), () => Actions.run({ a: "next" }));
+
       if ($("b-addrule")) {
         bindTap($("b-addrule"), () => {
           const v = $("i-rule")?.value?.trim();
           if (v) Actions.run({ a: "addrule", rule: v });
         });
       }
+
       if ($("b-skiprule")) bindTap($("b-skiprule"), () => Actions.run({ a: "skiprule" }));
 
       Renderer.mountArenaVideos();
@@ -1053,11 +1110,18 @@
       }
 
       wrap.classList.remove("hidden");
-      UI.setHTML("g-pw-list", myPowers.map((pw) => `
+      UI.setHTML(
+        "g-pw-list",
+        myPowers
+          .map(
+            (pw) => `
         <button class="btn btn-s pw-b" data-k="${pw.k}" style="padding:6px 14px;font-size:11px;white-space:nowrap">
           ${pw.i} ${pw.l}
         </button>
-      `).join(""));
+      `
+          )
+          .join("")
+      );
 
       document.querySelectorAll(".pw-b").forEach((btn) => {
         bindTap(btn, () => {
@@ -1112,9 +1176,16 @@
       UI.setText("tm-title", r?.n || "Round");
       UI.setText("tm-desc", r?.d || "");
 
-      UI.setHTML("tm-players", gs.players.map((p) => `
+      UI.setHTML(
+        "tm-players",
+        gs.players
+          .map(
+            (p) => `
         <button class="btn btn-s tm-fail" data-p="${p}" style="padding:6px 14px;font-size:11px">${p}</button>
-      `).join(""));
+      `
+          )
+          .join("")
+      );
 
       document.querySelectorAll(".tm-fail").forEach((btn) => {
         bindTap(btn, () => {
@@ -1150,15 +1221,27 @@
 
       UI.setText("pk-icon", c.t === "you" ? "👉" : c.t === "mate" ? "🤝" : "❓");
       UI.setText("pk-title", c.t === "you" ? "YOU" : c.t === "mate" ? "MATE" : "GOTCHA");
-      UI.setText("pk-label", c.t === "you" ? "Pick someone to drink!" : c.t === "mate" ? "Pick your drinking mate!" : "Who answered?");
+      UI.setText(
+        "pk-label",
+        c.t === "you"
+          ? "Pick someone to drink!"
+          : c.t === "mate"
+            ? "Pick your drinking mate!"
+            : "Who answered?"
+      );
 
-      UI.setHTML("pk-btns", gs.players
-        .filter((p) => p !== APP.state.me)
-        .map((p) => `
+      UI.setHTML(
+        "pk-btns",
+        gs.players
+          .filter((p) => p !== APP.state.me)
+          .map(
+            (p) => `
           <button class="btn btn-s pk-c" data-n="${p}" style="text-align:center">
             ${p} <span class="drink-badge">🍺${gs.drinks[p] || 0}</span>
           </button>
-        `).join("")
+        `
+          )
+          .join("")
       );
 
       document.querySelectorAll(".pk-c").forEach((btn) => {
@@ -1175,16 +1258,21 @@
 
       $("ov-results")?.classList.remove("hidden");
 
-      UI.setHTML("res-list", res.rk.map((x, i) => {
-        const last = i === res.rk.length - 1;
-        return `
+      UI.setHTML(
+        "res-list",
+        res.rk
+          .map((x, i) => {
+            const last = i === res.rk.length - 1;
+            return `
           <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:10px;background:${last ? "rgba(238,90,111,.1)" : "rgba(255,255,255,.02)"};border:1px solid ${last ? "var(--ac)" : "transparent"}">
             <span style="font-family:var(--fm);color:${i === 0 ? "var(--gd)" : "var(--mt)"};font-weight:700;width:24px">#${i + 1}</span>
             <span style="flex:1;color:${last ? "var(--ac)" : "var(--tx)"};font-weight:600;font-size:14px">${x.p}</span>
             <span style="font-family:var(--fm);color:var(--mt);font-size:11px">${x.t !== null ? `${(x.t / 1000).toFixed(2)}s` : "TIMEOUT"}</span>
           </div>
         `;
-      }).join(""));
+          })
+          .join("")
+      );
 
       UI.setText("res-loser", res.loser ? `🍺 ${res.loser} drinks! (+1)` : "No loser");
 
@@ -1241,7 +1329,10 @@
       APP.state.code = Util.randCode();
       APP.state.isHost = true;
 
-      UI.setHTML("lobby-status", `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Connecting...</span>`);
+      UI.setHTML(
+        "lobby-status",
+        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Connecting...</span>`
+      );
 
       if (typeof Peer === "undefined") {
         APP.state.peer = null;
@@ -1279,7 +1370,10 @@
         return alert("Can't connect. Check internet and refresh.");
       }
 
-      UI.setHTML("lobby-status", `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`);
+      UI.setHTML(
+        "lobby-status",
+        `<span class="spinner"></span> <span style="color:var(--mt);font-size:11px;margin-left:6px">Joining...</span>`
+      );
 
       try {
         const safeName = name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 4) || "plyr";

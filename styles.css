@@ -9,7 +9,6 @@
   --gd:#f0c040;
   --tx:#e8e4dc;
   --mt:#8d879f;
-  --card:#faf5eb;
   --ok:#4ade80;
   --fd:'Playfair Display',Georgia,serif;
   --fm:'IBM Plex Mono','Courier New',monospace;
@@ -114,64 +113,23 @@ button{cursor:pointer}
 .lobby-panel{width:100%;max-width:360px;padding:24px}
 .full-btn{width:100%;margin:14px 0}
 
-.divider{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:14px
-}
-
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .divider div{flex:1;height:1px;background:rgba(255,255,255,.06)}
 .divider span{color:var(--mt);font-size:10px;font-family:var(--fm)}
 
 .join-row{display:flex;gap:8px}
-.join-code{
-  text-align:center;
-  letter-spacing:6px;
-  font-family:var(--fm);
-  font-size:18px;
-  text-transform:uppercase
-}
-
+.join-code{text-align:center;letter-spacing:6px;font-family:var(--fm);font-size:18px;text-transform:uppercase}
 .lobby-status{text-align:center;margin-top:14px;min-height:20px}
 
-.wait-title{
-  font-family:var(--fd);
-  color:var(--ac);
-  font-size:24px;
-  margin-bottom:12px;
-  letter-spacing:3px
-}
-
+.wait-title{font-family:var(--fd);color:var(--ac);font-size:24px;margin-bottom:12px;letter-spacing:3px}
 .room-code-panel{padding:12px 36px;margin-bottom:16px;text-align:center}
-.room-code-label{
-  font-family:var(--fm);
-  color:var(--mt);
-  font-size:9px;
-  letter-spacing:2px;
-  margin-bottom:2px
-}
-
-.room-code-value{
-  font-family:var(--fd);
-  color:var(--gd);
-  font-size:36px;
-  letter-spacing:8px
-}
-
+.room-code-label{font-family:var(--fm);color:var(--mt);font-size:9px;letter-spacing:2px;margin-bottom:2px}
+.room-code-value{font-family:var(--fd);color:var(--gd);font-size:36px;letter-spacing:8px}
 .wait-actions{display:flex;gap:6px;margin-bottom:16px}
 .wait-action-btn{font-size:11px}
 .wait-status{margin-bottom:12px}
-
 .wait-players-panel{width:260px;margin-bottom:18px}
-.wait-players-title{
-  font-family:var(--fm);
-  color:var(--ac);
-  font-size:10px;
-  letter-spacing:1px;
-  margin-bottom:8px
-}
-
+.wait-players-title{font-family:var(--fm);color:var(--ac);font-size:10px;letter-spacing:1px;margin-bottom:8px}
 .wait-note{margin-top:10px}
 
 .game-screen{
@@ -180,7 +138,8 @@ button{cursor:pointer}
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  padding:4px 6px
+  padding:6px 6px 8px;
+  gap:6px
 }
 
 .top-row{
@@ -188,7 +147,7 @@ button{cursor:pointer}
   align-items:center;
   gap:4px;
   flex-shrink:0;
-  padding:2px 0
+  min-height:64px
 }
 
 .top-crown{font-size:12px}
@@ -207,15 +166,10 @@ button{cursor:pointer}
   align-items:center;
   gap:4px;
   flex-shrink:0;
-  padding:2px 0;
   overflow-x:auto
 }
 
-.invite-mini{
-  padding:2px 6px;
-  font-size:7px;
-  flex-shrink:0
-}
+.invite-mini{padding:2px 6px;font-size:7px;flex-shrink:0}
 
 .chip{
   display:inline-flex;
@@ -230,19 +184,13 @@ button{cursor:pointer}
   white-space:nowrap
 }
 
-.score-strip{
-  display:flex;
-  gap:3px;
-  flex:1;
-  overflow-x:auto
-}
+.score-strip{display:flex;gap:3px;flex:1;overflow-x:auto}
 
 .power-bar{
   display:flex;
   gap:6px;
   flex-shrink:0;
-  overflow-x:auto;
-  padding:4px 0 2px
+  overflow-x:auto
 }
 
 .power-pill{
@@ -260,42 +208,32 @@ button{cursor:pointer}
 }
 
 .extra-row{
-  flex-shrink:0;
   display:flex;
   gap:4px;
-  overflow-x:auto;
-  padding:1px 0
-}
-
-.main-stage{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  min-height:0;
-  padding:6px 0 2px
-}
-
-.players-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
   flex-shrink:0;
-  padding:6px 0 4px
+  overflow-x:auto
+}
+
+/* key change */
+.players-strip{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  flex-shrink:0;
+  padding:2px 0
 }
 
 .player-tile{
-  min-height:72px;
+  min-width:155px;
+  max-width:190px;
   border-radius:14px;
-  padding:8px;
+  padding:10px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  gap:6px
+  gap:8px
 }
 
 .player-tile.turn{
@@ -304,25 +242,13 @@ button{cursor:pointer}
   box-shadow:0 0 20px rgba(238,90,111,.16)
 }
 
-.player-top{
-  display:flex;
-  align-items:center;
-  gap:6px
-}
-
-.player-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#202032;
-  flex-shrink:0
-}
-
+.player-top{display:flex;align-items:center;gap:6px}
+.player-dot{width:8px;height:8px;border-radius:50%;background:#202032;flex-shrink:0}
 .player-tile.turn .player-dot{background:var(--ac)}
 
 .player-name{
   color:var(--tx);
-  font-size:13px;
+  font-size:14px;
   font-weight:700;
   line-height:1.2;
   overflow:hidden;
@@ -330,17 +256,8 @@ button{cursor:pointer}
   white-space:nowrap
 }
 
-.player-sub{
-  display:flex;
-  flex-wrap:wrap;
-  gap:4px
-}
-
-.player-turn-tag{
-  color:var(--ac);
-  font-family:var(--fm);
-  font-size:9px
-}
+.player-sub{display:flex;flex-wrap:wrap;gap:4px}
+.player-turn-tag{color:var(--ac);font-family:var(--fm);font-size:9px}
 
 .drink-badge{
   display:inline-flex;
@@ -368,6 +285,17 @@ button{cursor:pointer}
   color:var(--gd)
 }
 
+.main-stage{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  overflow:hidden;
+  min-height:0;
+  padding-top:10px
+}
+
 .status-bar{
   display:flex;
   align-items:center;
@@ -378,17 +306,14 @@ button{cursor:pointer}
   font-size:10px
 }
 
-.status-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%
-}
+.status-dot{width:7px;height:7px;border-radius:50%}
 
 .powers-wrap{
+  display:flex;
   gap:3px;
   flex-shrink:0;
   overflow-x:auto;
-  padding:2px 0
+  padding-top:2px
 }
 
 .powers-list{display:flex;gap:3px}
@@ -450,24 +375,11 @@ button{cursor:pointer}
   padding:16px
 }
 
-.modal-card{
-  padding:28px;
-  max-width:340px;
-  width:85%;
-  text-align:center
-}
-
+.modal-card{padding:28px;max-width:340px;width:85%;text-align:center}
 .modal-icon{font-size:36px;margin-bottom:10px}
 .modal-title{font-family:var(--fd);color:var(--ac);font-size:20px;margin-bottom:12px}
 .modal-text{color:var(--mt);font-size:12px;margin-bottom:12px}
-.modal-close{
-  margin-top:12px;
-  background:none;
-  border:none;
-  color:var(--mt);
-  font-size:10px;
-  cursor:pointer
-}
+.modal-close{margin-top:12px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer}
 
 .invite-code-box{
   background:rgba(240,192,64,.08);
@@ -486,19 +398,8 @@ button{cursor:pointer}
 }
 
 .reaction-icon{font-size:56px;margin-bottom:12px}
-.reaction-title{
-  font-family:var(--fd);
-  color:var(--ac);
-  font-size:28px;
-  margin-bottom:6px;
-  letter-spacing:2px
-}
-.reaction-by{
-  font-family:var(--fm);
-  color:var(--mt);
-  font-size:12px;
-  margin-bottom:20px
-}
+.reaction-title{font-family:var(--fd);color:var(--ac);font-size:28px;margin-bottom:6px;letter-spacing:2px}
+.reaction-by{font-family:var(--fm);color:var(--mt);font-size:12px;margin-bottom:20px}
 
 .progress-track{
   width:240px;
@@ -509,15 +410,7 @@ button{cursor:pointer}
   overflow:hidden
 }
 
-.progress-track-timer{margin-bottom:20px}
-
-.progress-fill{
-  height:100%;
-  border-radius:3px;
-  width:100%;
-  transition:width .05s linear
-}
-
+.progress-fill{height:100%;border-radius:3px;width:100%;transition:width .05s linear}
 .progress-ac{background:var(--ac)}
 .progress-gd{background:var(--gd)}
 
@@ -541,78 +434,22 @@ button{cursor:pointer}
 .reaction-done-text{font-family:var(--fm);color:var(--gd);font-size:13px}
 .reaction-time{font-family:var(--fm);color:var(--mt);font-size:10px;margin-top:16px}
 
-.results-title{
-  font-family:var(--fd);
-  color:var(--gd);
-  font-size:24px;
-  margin-bottom:20px;
-  letter-spacing:2px
-}
-
-.results-list{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  margin-bottom:20px;
-  width:280px
-}
-
-.results-loser{
-  color:var(--ac);
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:16px
-}
+.results-title{font-family:var(--fd);color:var(--gd);font-size:24px;margin-bottom:20px;letter-spacing:2px}
+.results-list{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;width:280px}
+.results-loser{color:var(--ac);font-size:15px;font-weight:700;margin-bottom:16px}
 
 .pick-icon{font-size:40px;margin-bottom:10px}
 .pick-title{font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:6px}
 .pick-label{color:var(--mt);font-size:13px;margin-bottom:22px}
-.pick-buttons{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  width:240px
-}
+.pick-buttons{display:flex;flex-direction:column;gap:8px;width:240px}
 
 .timer-icon{font-size:48px;margin-bottom:10px}
 .timer-title{font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:4px}
-.timer-desc{
-  color:var(--mt);
-  font-size:12px;
-  margin-bottom:16px;
-  text-align:center;
-  max-width:280px
-}
-
-.timer-clock{
-  font-family:var(--fd);
-  font-size:48px;
-  color:var(--ac);
-  margin-bottom:16px
-}
-
-.timer-help{
-  color:var(--mt);
-  font-size:10px;
-  margin-bottom:16px
-}
-
-.timer-players{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  justify-content:center;
-  max-width:300px
-}
-
-.timer-skip-btn{
-  margin-top:16px;
-  background:none;
-  border:none;
-  color:var(--mt);
-  font-size:10px;
-  cursor:pointer
-}
+.timer-desc{color:var(--mt);font-size:12px;margin-bottom:16px;text-align:center;max-width:280px}
+.timer-clock{font-family:var(--fd);font-size:48px;color:var(--ac);margin-bottom:16px}
+.timer-help{color:var(--mt);font-size:10px;margin-bottom:16px}
+.timer-players{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:300px}
+.timer-skip-btn{margin-top:16px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer}
 
 .you-drink{
   position:fixed;
@@ -637,11 +474,7 @@ button{cursor:pointer}
   animation:drinkPulse .45s ease 2
 }
 
-.small-note{
-  font-family:var(--fm);
-  font-size:10px;
-  color:var(--mt)
-}
+.small-note{font-family:var(--fm);font-size:10px;color:var(--mt)}
 
 .spinner{
   width:20px;
@@ -678,11 +511,7 @@ button{cursor:pointer}
   box-shadow:0 0 18px rgba(238,90,111,.2)
 }
 
-.vid-strip .vb video{
-  width:100%;
-  height:100%;
-  object-fit:cover
-}
+.vid-strip .vb video{width:100%;height:100%;object-fit:cover}
 
 .vid-strip .vb .vl{
   position:absolute;
@@ -731,9 +560,7 @@ button{cursor:pointer}
   50%{box-shadow:0 0 80px rgba(238,90,111,.7)}
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 @keyframes glow{
   0%,100%{filter:drop-shadow(0 0 8px rgba(240,192,64,.3))}
@@ -754,10 +581,4 @@ button{cursor:pointer}
   0%{transform:scale(.92)}
   50%{transform:scale(1.06)}
   100%{transform:scale(1)}
-}
-
-@media (min-width:700px){
-  .players-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-}
+      }

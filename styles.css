@@ -785,6 +785,10 @@ img{
   -webkit-tap-highlight-color:transparent;
   user-select:none;
   border-radius:22px;
+
+  position:relative;
+  z-index:10;
+  pointer-events:auto;
 }
 
 .card-w.draw-enabled{

@@ -1,308 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>KAD KINGS</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  font-family:system-ui;
-  background:#06060e;
-  color:#fff;
-  overflow:hidden;
-}
-
-#app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-
-/* SPLASH */
-#splash{
-  position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#000;
-  z-index:999;
-}
-
-#splash img{
-  width:80%;
-  max-width:400px;
-  animation:fade 2s forwards;
-}
-
-@keyframes fade{
-  0%{opacity:0;transform:scale(.9)}
-  100%{opacity:1;transform:scale(1)}
-}
-
-/* TOP BAR */
-#top{
-  padding:8px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-/* PLAYERS */
-#players{
-  display:flex;
-  gap:6px;
-  padding:6px;
-}
-
-.player{
-  flex:1;
-  background:#111;
-  border-radius:10px;
-  height:70px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* INFO BARS */
-.info{
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  padding:4px;
-}
-
-.chip{
-  background:#222;
-  padding:4px 8px;
-  border-radius:999px;
-  font-size:12px;
-}
-
-/* MAIN */
-#main{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-
-/* CARD */
-#card{
-  width:140px;
-  height:200px;
-  border-radius:14px;
-  background:#fff;
-  color:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:32px;
-  cursor:pointer;
-  box-shadow:0 0 30px rgba(255,0,80,.4);
-}
-
-/* BUTTONS */
-button{
-  margin-top:10px;
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  background:#ee5a6f;
-  color:#fff;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>KAD KINGS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-<div id="app">
 
-<div id="splash">
-  <img src="logo.png"/>
-</div>
+  <div id="s-splash">
+    <div class="splash-logo-wrap">
+      <img src="logo.png" alt="KAD Kings logo" class="splash-logo" onerror="this.style.display='none';document.getElementById('splash-fallback').classList.remove('hidden')">
+      <div id="splash-fallback" class="splash-fallback hidden">KAD KINGS</div>
+    </div>
+    <div class="splash-sub">THE DRINKING CARD GAME</div>
+  </div>
 
-<div id="top">
-  <div id="count"></div>
-  <button id="fs">⛶</button>
-</div>
+  <div class="lobby-stage">
+    <div class="lobby-bg"></div>
+    <div class="lobby-logo-bg"></div>
+    <div class="lobby-vignette"></div>
+  </div>
 
-<div id="players"></div>
+  <div id="s-lobby" class="screen hidden" style="position:relative;z-index:1">
+    <div class="brand-hero">
+      <img src="logo.png" alt="KAD Kings" class="brand-logo" onerror="this.style.display='none';document.getElementById('brand-fallback').classList.remove('hidden')">
+      <div id="brand-fallback" class="brand-logo-fallback hidden">
+        <h1>KAD KINGS</h1>
+        <p>THE DRINKING CARD GAME</p>
+      </div>
+    </div>
 
-<div class="info" id="stats"></div>
-<div class="info" id="rules"></div>
-<div class="info" id="mates"></div>
+    <div class="panel" style="width:100%;max-width:360px;padding:24px">
+      <input id="i-name" class="inp" placeholder="Your name" style="margin-bottom:14px">
+      <button id="b-create" class="btn btn-ac" style="width:100%;margin-bottom:14px">CREATE ROOM</button>
 
-<div id="main"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+        <span style="color:var(--mt);font-size:10px;font-family:var(--fm)">OR JOIN</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.06)"></div>
+      </div>
 
-</div>
+      <div style="display:flex;gap:8px">
+        <input id="i-code" class="inp" placeholder="CODE" maxlength="5" style="text-align:center;letter-spacing:6px;font-family:var(--fm);font-size:18px;text-transform:uppercase">
+        <button id="b-join" class="btn btn-s">JOIN</button>
+      </div>
 
-<script>
+      <div id="lobby-status" style="text-align:center;margin-top:14px;min-height:20px"></div>
+    </div>
+  </div>
 
-/* ================= STATE ================= */
+  <div id="s-wait" class="screen hidden" style="position:relative;z-index:1">
+    <div class="wait-brand">
+      <img src="logo.png" alt="KAD Kings" onerror="this.style.display='none'">
+    </div>
+    <div class="float" style="font-size:44px;margin-bottom:12px">👑</div>
+    <h2 style="font-family:var(--fd);color:var(--ac);font-size:24px;margin-bottom:12px;letter-spacing:3px">WAITING ROOM</h2>
 
-const state = {
-  players:["wes","tom"],
-  turn:0,
-  deck:[],
-  drawn:[],
-  mates:[],
-  rules:[],
-  phase:"draw"
-};
+    <div class="panel" style="padding:12px 36px;margin-bottom:16px;text-align:center">
+      <p style="font-family:var(--fm);color:var(--mt);font-size:9px;letter-spacing:2px;margin-bottom:2px">ROOM CODE</p>
+      <span id="w-code" style="font-family:var(--fd);color:var(--gd);font-size:36px;letter-spacing:8px"></span>
+    </div>
 
-/* ================= RULES ================= */
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      <button id="b-invite" class="btn btn-s" style="font-size:11px">📤 Invite</button>
+      <button id="b-fs" class="btn btn-dark" style="padding:8px 14px;font-size:11px">⛶ Full</button>
+    </div>
 
-const RULES = {
-  A:{n:"Waterfall"},
-  2:{n:"Pick"},
-  3:{n:"Me"},
-  4:{n:"Girls"},
-  5:{n:"Guys"},
-  6:{n:"Everyone"},
-  7:{n:"Heaven"},
-  8:{n:"Mate"},
-  9:{n:"Rhyme"},
-  10:{n:"Categories"},
-  J:{n:"Thumb"},
-  Q:{n:"Question"},
-  K:{n:"Rule"}
-};
+    <div id="w-status" style="margin-bottom:12px"></div>
 
-/* ================= INIT ================= */
+    <div class="panel" style="width:260px;margin-bottom:18px">
+      <p style="font-family:var(--fm);color:var(--ac);font-size:10px;letter-spacing:1px;margin-bottom:8px">👥 PLAYERS</p>
+      <div id="w-players"></div>
+    </div>
 
-function init(){
-  const suits=["♠","♥","♣","♦"];
-  const values=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+    <button id="b-start" class="btn btn-ac" disabled>NEED 2+ PLAYERS</button>
+    <div class="small-note" style="margin-top:10px">Solo start is allowed for testing.</div>
+  </div>
 
-  suits.forEach(s=>{
-    values.forEach(v=>{
-      state.deck.push({v,s});
-    });
-  });
+  <div id="s-game" class="hidden" style="height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;padding:4px 6px;position:relative;z-index:1">
+    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 0">
+      <span style="font-size:12px">👑</span>
+      <div id="vid-strip" class="vid-strip" style="flex:1;min-width:0"></div>
+      <div id="vid-ctrl-mini" style="flex-shrink:0">
+        <button id="b-cam" class="btn btn-s" style="padding:3px 8px;font-size:8px">📹</button>
+      </div>
+      <div id="g-conn" class="status-bar" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:1px 5px;flex-shrink:0"></div>
+    </div>
 
-  shuffle();
-  render();
+    <div id="g-info" style="display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 0;overflow-x:auto">
+      <span id="g-deck" class="chip"></span>
+      <span id="g-kings" class="chip"></span>
+      <div id="g-scores" style="display:flex;gap:3px;flex:1;overflow-x:auto"></div>
+      <button id="b-inv2" class="btn btn-s" style="padding:2px 6px;font-size:7px;flex-shrink:0">📤</button>
+    </div>
 
-  setTimeout(()=>document.getElementById("splash").style.display="none",2000);
-}
+    <div id="g-extra" style="flex-shrink:0;display:flex;gap:4px;overflow-x:auto;padding:1px 0"></div>
 
-function shuffle(){
-  state.deck.sort(()=>Math.random()-0.5);
-}
+    <div id="g-main" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0"></div>
 
-/* ================= DRAW ================= */
+    <div id="g-powers" style="display:none;gap:3px;flex-shrink:0;overflow-x:auto;padding:2px 0">
+      <div id="g-pw-list" style="display:flex;gap:3px"></div>
+    </div>
 
-function draw(){
-  if(!state.deck.length) return endGame();
+    <div class="hidden">
+      <div id="g-players"></div>
+      <div id="g-mates-sec"></div>
+      <div id="g-mates"></div>
+      <div id="g-rules"></div>
+      <div id="g-rules-list"></div>
+      <div id="g-hist"></div>
+    </div>
+  </div>
 
-  const card = state.deck.pop();
-  state.drawn.push(card);
+  <div id="m-invite" class="ov hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="panel" style="padding:28px;max-width:340px;width:85%;text-align:center">
+      <div style="font-size:36px;margin-bottom:10px">📤</div>
+      <h3 style="font-family:var(--fd);color:var(--ac);font-size:20px;margin-bottom:12px">Invite Friends</h3>
+      <p style="color:var(--mt);font-size:12px;margin-bottom:12px">Share this room code:</p>
+      <div style="background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.25);border-radius:12px;padding:12px 20px;margin-bottom:16px">
+        <span id="m-code" style="font-family:var(--fd);color:var(--gd);font-size:32px;letter-spacing:8px;user-select:all"></span>
+      </div>
+      <button id="b-copy" class="btn btn-s">📋 Copy Invite</button>
+      <br><button id="b-close-invite" style="margin-top:12px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Close</button>
+    </div>
+  </div>
 
-  handleRule(card);
+  <div id="ov-react" class="ov hidden">
+    <div id="r-icon" style="font-size:56px;margin-bottom:12px"></div>
+    <h2 id="r-title" style="font-family:var(--fd);color:var(--ac);font-size:28px;margin-bottom:6px;letter-spacing:2px"></h2>
+    <p id="r-by" style="font-family:var(--fm);color:var(--mt);font-size:12px;margin-bottom:20px"></p>
+    <div style="width:240px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:20px;overflow:hidden">
+      <div id="r-bar" style="height:100%;background:var(--ac);border-radius:3px;width:100%;transition:width .05s linear"></div>
+    </div>
+    <div id="r-tap-area">
+      <button id="r-tap" style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,var(--ac),#a01030);border:3px solid rgba(255,255,255,.15);color:#fff;font-size:22px;font-family:var(--fd);font-weight:900;letter-spacing:2px;box-shadow:0 0 50px rgba(238,90,111,.5);animation:pulse 1s ease-in-out infinite">TAP!</button>
+    </div>
+    <div id="r-done" class="hidden" style="text-align:center">
+      <div style="font-size:40px;margin-bottom:6px">✅</div>
+      <p style="font-family:var(--fm);color:var(--gd);font-size:13px">Tapped!</p>
+    </div>
+    <p id="r-time" style="font-family:var(--fm);color:var(--mt);font-size:10px;margin-top:16px"></p>
+  </div>
 
-  state.turn = (state.turn+1)%state.players.length;
-  render();
-}
+  <div id="ov-results" class="ov hidden">
+    <h2 style="font-family:var(--fd);color:var(--gd);font-size:24px;margin-bottom:20px;letter-spacing:2px">RESULTS</h2>
+    <div id="res-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;width:280px"></div>
+    <p id="res-loser" style="color:var(--ac);font-size:15px;font-weight:700;margin-bottom:16px"></p>
+    <button id="b-res-ok" class="btn btn-s">Continue</button>
+  </div>
 
-/* ================= RULE HANDLER ================= */
+  <div id="ov-pick" class="ov hidden">
+    <div id="pk-icon" style="font-size:40px;margin-bottom:10px"></div>
+    <h2 id="pk-title" style="font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:6px"></h2>
+    <p id="pk-label" style="color:var(--mt);font-size:13px;margin-bottom:22px"></p>
+    <div id="pk-btns" style="display:flex;flex-direction:column;gap:8px;width:240px"></div>
+  </div>
 
-function handleRule(card){
-  const v = card.v;
+  <div id="ov-timer" class="ov hidden">
+    <div id="tm-icon" style="font-size:48px;margin-bottom:10px"></div>
+    <h2 id="tm-title" style="font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:4px"></h2>
+    <p id="tm-desc" style="color:var(--mt);font-size:12px;margin-bottom:16px;text-align:center;max-width:280px"></p>
+    <div id="tm-clock" style="font-family:var(--fd);font-size:48px;color:var(--ac);margin-bottom:16px">30</div>
+    <div style="width:240px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-bottom:20px;overflow:hidden">
+      <div id="tm-bar" style="height:100%;background:var(--gd);border-radius:3px;width:100%;transition:width .1s linear"></div>
+    </div>
+    <p style="color:var(--mt);font-size:10px;margin-bottom:16px">When someone fails, tap their name:</p>
+    <div id="tm-players" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:300px"></div>
+    <button id="tm-skip" style="margin-top:16px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer">Skip (no one failed)</button>
+  </div>
 
-  if(v==="8"){
-    pickMate();
-  }
+  <div id="ov-drink" class="you-drink hidden">
+    <div class="yd-inner" id="yd-text">YOU DRINK<br>🍺 +1</div>
+  </div>
 
-  if(v==="9"||v==="10"){
-    state.phase="manual";
-    state.manualStarter=state.players[state.turn];
-  }
-
-  if(v==="K"){
-    const r = prompt("New Rule?");
-    if(r) state.rules.push(r);
-  }
-}
-
-/* ================= MANUAL ================= */
-
-function manualLose(player){
-  alert(player+" drinks 🍺");
-  state.phase="draw";
-  render();
-}
-
-/* ================= UI ================= */
-
-function render(){
-
-  document.getElementById("count").innerText =
-    state.deck.length+" left";
-
-  const pWrap=document.getElementById("players");
-  pWrap.innerHTML="";
-  state.players.forEach(p=>{
-    const d=document.createElement("div");
-    d.className="player";
-    d.innerText=p;
-    pWrap.appendChild(d);
-  });
-
-  document.getElementById("rules").innerHTML =
-    state.rules.map(r=>`<span class="chip">${r}</span>`).join("");
-
-  document.getElementById("mates").innerHTML =
-    state.mates.map(m=>`<span class="chip">${m[0]}→${m[1]}</span>`).join("");
-
-  const main=document.getElementById("main");
-
-  if(state.phase==="manual"){
-    main.innerHTML = `
-      <h2>${state.manualStarter} starts</h2>
-      ${state.players.map(p=>`<button onclick="manualLose('${p}')">${p}</button>`).join("")}
-    `;
-    return;
-  }
-
-  main.innerHTML = `
-    <div id="card" onclick="draw()">🂠</div>
-  `;
-}
-
-/* ================= MATE ================= */
-
-function pickMate(){
-  const target = prompt("Pick mate");
-  if(target){
-    state.mates.push([state.players[state.turn],target]);
-  }
-}
-
-/* ================= END ================= */
-
-function endGame(){
-  alert("Game Over");
-}
-
-/* ================= FULLSCREEN ================= */
-
-document.getElementById("fs").onclick = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-};
-
-/* ================= START ================= */
-
-init();
-
-</script>
+  <script src="app.js"></script>
 </body>
 </html>

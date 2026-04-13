@@ -66,20 +66,26 @@
 
   function bindTap(el, fn) {
     if (!el) return;
+
     el.onclick = null;
     el.ontouchend = null;
     el.onpointerup = null;
 
     el.onclick = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       fn(e);
     };
+
     el.ontouchend = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       fn(e);
     };
+
     el.onpointerup = (e) => {
       e.preventDefault();
+      e.stopPropagation();
       fn(e);
     };
   }
@@ -155,10 +161,12 @@
           deck.push({ s, v });
         }
       }
+
       for (let i = deck.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
       }
+
       return deck;
     },
 
@@ -400,6 +408,20 @@
       return $("vid-strip");
     },
 
+    getArena() {
+      return document.querySelector(".arena-wrap");
+    },
+
+    ensureStripExists() {
+      let strip = Video.getStrip();
+      if (strip) return strip;
+
+      strip = document.createElement("div");
+      strip.id = "vid-strip";
+      strip.className = "vid-strip";
+      return strip;
+    },
+
     updateLayoutClass() {
       const strip = Video.getStrip();
       if (!strip) return;
@@ -414,13 +436,16 @@
     },
 
     mountIntoArena() {
-      const strip = Video.getStrip();
-      const arena = document.querySelector(".arena-wrap");
-      if (!strip || !arena) return;
+      const arena = Video.getArena();
+      if (!arena) return;
+
+      const strip = Video.ensureStripExists();
 
       if (strip.parentElement !== arena) {
         arena.appendChild(strip);
       }
+
+      Video.updateLayoutClass();
     },
 
     async start() {
@@ -487,10 +512,9 @@
     },
 
     addBox(id, stream, muted = false, label = "") {
-      const strip = Video.getStrip();
-      if (!strip) return;
-
+      const strip = Video.ensureStripExists();
       let box = document.getElementById(`v-${CSS.escape(id)}`);
+
       if (!box) {
         box = document.createElement("div");
         box.id = `v-${id}`;
@@ -504,15 +528,20 @@
       }
 
       const video = box.querySelector("video");
-      if (video.srcObject !== stream) video.srcObject = stream;
-      if (muted) video.style.transform = "scaleX(-1)";
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+      }
+
+      if (muted) {
+        video.muted = true;
+        video.style.transform = "scaleX(-1)";
+      }
 
       const labelEl = box.querySelector(".vl");
       labelEl.textContent = label || (id === "me" ? APP.state.me : "peer");
 
-      Video.updateLayoutClass();
-      Renderer.refreshVideoTurnHighlight();
       Video.mountIntoArena();
+      Renderer.refreshVideoTurnHighlight();
     },
 
     removeBox(id) {
@@ -759,7 +788,6 @@
   const Renderer = {
     mountArenaVideos() {
       Video.mountIntoArena();
-      Video.updateLayoutClass();
       Renderer.refreshVideoTurnHighlight();
     },
 
@@ -799,7 +827,6 @@
 
       const b = $("b-start");
       if (!b) return;
-
       b.disabled = false;
       b.textContent = gs.players.length >= 2 ? "START GAME" : "START SOLO (test)";
     },
@@ -964,7 +991,7 @@
             </div>
 
             <div class="${gs.flip ? "card-draw-anim" : ""}" style="display:flex;justify-content:center;">
-              <div class="card-w ${gs.phase === "idle" && meTurn ? "draw-enabled" : ""}" id="b-draw">
+              <div class="card-w ${gs.phase === "idle" || (gs.phase === "shown" && meTurn) ? "draw-enabled" : ""}" id="b-draw">
                 <div class="card-i${gs.flip ? " flipped" : ""}">
                   <div class="card-f card-b">
                     <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:14px;display:flex;align-items:center;justify-content:center">
@@ -1067,8 +1094,17 @@
       el.innerHTML = html;
 
       const drawBtn = $("b-draw");
-      if (drawBtn && gs.phase === "idle" && meTurn) {
-        bindTap(drawBtn, () => Actions.run({ a: "draw", p: APP.state.me }));
+      if (drawBtn) {
+        bindTap(drawBtn, () => {
+          if (gs.phase === "idle" && meTurn) {
+            Actions.run({ a: "draw", p: APP.state.me });
+            return;
+          }
+
+          if (gs.phase === "shown" && meTurn) {
+            Actions.run({ a: "next" });
+          }
+        });
       }
 
       if ($("b-next")) bindTap($("b-next"), () => Actions.run({ a: "next" }));

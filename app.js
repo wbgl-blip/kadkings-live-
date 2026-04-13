@@ -60,6 +60,22 @@
 
   const $ = (id) => document.getElementById(id);
 
+  function bindTap(el, fn) {
+    if (!el) return;
+    el.onclick = (e) => {
+      e.preventDefault();
+      fn(e);
+    };
+    el.ontouchend = (e) => {
+      e.preventDefault();
+      fn(e);
+    };
+    el.onpointerup = (e) => {
+      e.preventDefault();
+      fn(e);
+    };
+  }
+
   const UI = {
     show(screenId) {
       ["s-lobby", "s-wait", "s-game"].forEach(id => {
@@ -80,7 +96,7 @@
       $("ov-drink").classList.remove("hidden");
 
       if (navigator.vibrate) {
-        try { navigator.vibrate([120, 70, 120]); } catch {}
+        try { navigator.vibrate([120,70,120]); } catch {}
       }
 
       clearTimeout(APP.state.timers.drinkOverlay);
@@ -433,7 +449,7 @@
 
       if (!started) {
         el.innerHTML = `<button id="b-cam" class="btn btn-s cam-btn">📹</button>`;
-        $("b-cam").onclick = Video.start;
+        bindTap($("b-cam"), Video.start);
         return;
       }
 
@@ -442,19 +458,19 @@
         <button id="b-togm" class="btn btn-s" style="padding:3px 6px;font-size:8px;${APP.state.micOn ? "color:#4ade80" : "color:#666"}">${APP.state.micOn ? "🎤" : "🔇"}</button>
       `;
 
-      $("b-togc").onclick = () => {
+      bindTap($("b-togc"), () => {
         const tracks = APP.state.localStream?.getVideoTracks() || [];
         tracks.forEach(t => t.enabled = !t.enabled);
         APP.state.camOn = !APP.state.camOn;
         Video.renderControls(true);
-      };
+      });
 
-      $("b-togm").onclick = () => {
+      bindTap($("b-togm"), () => {
         const tracks = APP.state.localStream?.getAudioTracks() || [];
         tracks.forEach(t => t.enabled = !t.enabled);
         APP.state.micOn = !APP.state.micOn;
         Video.renderControls(true);
-      };
+      });
     }
   };
 
@@ -754,11 +770,11 @@
           </button>
         `).join(""));
         document.querySelectorAll(".pw-b").forEach(btn => {
-          btn.onclick = () => {
+          bindTap(btn, () => {
             const k = btn.dataset.k;
             if (k === "questionmaster") Actions.run({ a: "gotcha", p: APP.state.me });
             else Actions.run({ a: "power", k, p: APP.state.me });
-          };
+          });
         });
       } else {
         $("g-powers").classList.add("hidden");
@@ -834,7 +850,7 @@
             <button class="btn btn-gd" id="b-reset" style="padding:10px 24px;font-size:14px">PLAY AGAIN</button>
           </div>
         `;
-        $("b-reset").onclick = () => Actions.run({ a: "reset" });
+        bindTap($("b-reset"), () => Actions.run({ a: "reset" }));
         return;
       }
 
@@ -848,7 +864,7 @@
         </div>
 
         <div class="${gs.flip ? "card-draw-anim" : ""}" style="margin-bottom:8px">
-          <div class="card-w" id="b-draw">
+          <div class="card-w ${gs.phase === 'idle' && meTurn ? 'draw-enabled' : ''}" id="b-draw">
             <div class="card-i${gs.flip ? " flipped" : ""}">
               <div class="card-f card-b">
                 <div style="width:78%;height:78%;border:1.5px solid rgba(238,90,111,.25);border-radius:10px;display:flex;align-items:center;justify-content:center">
@@ -942,17 +958,16 @@
       el.innerHTML = html;
 
       const drawBtn = $("b-draw");
-      if (drawBtn) {
-        if (gs.phase === "idle" && meTurn) drawBtn.onclick = () => Actions.run({ a: "draw", p: APP.state.me });
-        else drawBtn.onclick = null;
+      if (drawBtn && gs.phase === "idle" && meTurn) {
+        bindTap(drawBtn, () => Actions.run({ a: "draw", p: APP.state.me }));
       }
 
-      if ($("b-next")) $("b-next").onclick = () => Actions.run({ a: "next" });
-      if ($("b-addrule")) $("b-addrule").onclick = () => {
+      if ($("b-next")) bindTap($("b-next"), () => Actions.run({ a: "next" }));
+      if ($("b-addrule")) bindTap($("b-addrule"), () => {
         const v = $("i-rule")?.value?.trim();
         if (v) Actions.run({ a: "addrule", rule: v });
-      };
-      if ($("b-skiprule")) $("b-skiprule").onclick = () => Actions.run({ a: "skiprule" });
+      });
+      if ($("b-skiprule")) bindTap($("b-skiprule"), () => Actions.run({ a: "skiprule" }));
 
       Renderer.runWaterfallClock();
     },
@@ -990,16 +1005,16 @@
       `).join(""));
 
       document.querySelectorAll(".tm-fail").forEach(btn => {
-        btn.onclick = () => {
+        bindTap(btn, () => {
           Actions.run({ a: "timerfail", loser: btn.dataset.p });
           $("ov-timer").classList.add("hidden");
-        };
+        });
       });
 
-      $("tm-skip").onclick = () => {
+      bindTap($("tm-skip"), () => {
         Actions.run({ a: "timerskip" });
         $("ov-timer").classList.add("hidden");
-      };
+      });
 
       clearInterval(APP.state.timers.round);
       APP.state.timers.round = setInterval(() => {
@@ -1035,10 +1050,10 @@
       );
 
       document.querySelectorAll(".pk-c").forEach(btn => {
-        btn.onclick = () => {
+        bindTap(btn, () => {
           Actions.run({ a: "picked", from: gs.pick.from, target: btn.dataset.n });
           $("ov-pick").classList.add("hidden");
-        };
+        });
       });
     },
 
@@ -1060,10 +1075,10 @@
       }).join(""));
 
       UI.setText("res-loser", res.loser ? `🍺 ${res.loser} drinks! (+1)` : "No loser");
-      $("b-res-ok").onclick = () => {
+      bindTap($("b-res-ok"), () => {
         Actions.run({ a: "dismiss" });
         $("ov-results").classList.add("hidden");
-      };
+      });
     },
 
     handleReaction() {
@@ -1080,7 +1095,7 @@
         $("r-tap-area").classList.toggle("hidden", !!tapped || APP.state.me === gs.rx.by);
         $("r-done").classList.toggle("hidden", !tapped && APP.state.me !== gs.rx.by);
 
-        $("r-tap").onclick = () => Actions.run({ a: "tap", p: APP.state.me });
+        bindTap($("r-tap"), () => Actions.run({ a: "tap", p: APP.state.me }));
 
         APP.state.timers.reaction = setInterval(() => {
           const rem = Math.max(0, APP.config.REACTION_TIME - (Date.now() - gs.rx.st));
@@ -1224,18 +1239,19 @@
     },
 
     bindEvents() {
-      $("b-create").onclick = App.createRoom;
-      $("b-join").onclick = App.joinRoom;
-      $("b-start").onclick = App.startGame;
-      $("b-invite").onclick = App.showInvite;
-      $("b-inv2").onclick = App.showInvite;
-      $("b-copy").onclick = App.copyInvite;
-      $("b-close-invite").onclick = () => $("m-invite").classList.add("hidden");
+      bindTap($("b-create"), App.createRoom);
+      bindTap($("b-join"), App.joinRoom);
+      bindTap($("b-start"), App.startGame);
+      bindTap($("b-invite"), App.showInvite);
+      bindTap($("b-inv2"), App.showInvite);
+      bindTap($("b-copy"), App.copyInvite);
+      bindTap($("b-close-invite"), () => $("m-invite").classList.add("hidden"));
+      bindTap($("b-fs"), App.toggleFullscreenMode);
+      bindTap($("b-cam"), Video.start);
+
       $("m-invite").onclick = (e) => {
         if (e.target === $("m-invite")) $("m-invite").classList.add("hidden");
       };
-      $("b-fs").onclick = App.toggleFullscreenMode;
-      $("b-cam").onclick = Video.start;
 
       $("i-code").addEventListener("input", (e) => {
         e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5);

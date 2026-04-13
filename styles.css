@@ -138,27 +138,40 @@ button{cursor:pointer}
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  padding:6px 8px 10px;
-  gap:6px
+  padding:6px 8px 8px;
+  gap:4px
 }
 
+/* BIGGER video strip */
 .top-row{
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:6px;
   flex-shrink:0;
-  min-height:64px
+  min-height:94px
 }
 
-.top-crown{font-size:12px}
-.vid-ctrl-mini{flex-shrink:0}
-.cam-btn{padding:3px 8px;font-size:8px}
+.top-crown{
+  font-size:15px;
+  align-self:flex-start;
+  margin-top:10px
+}
+
+.vid-ctrl-mini{
+  flex-shrink:0;
+  align-self:flex-start;
+  margin-top:8px
+}
+
+.cam-btn{padding:4px 10px;font-size:9px}
 
 .game-conn{
   background:rgba(255,255,255,.03);
   border:1px solid rgba(255,255,255,.06);
-  padding:1px 5px;
-  flex-shrink:0
+  padding:3px 7px;
+  flex-shrink:0;
+  align-self:flex-start;
+  margin-top:8px
 }
 
 .info-row{
@@ -216,6 +229,7 @@ button{cursor:pointer}
   min-height:0
 }
 
+/* player tile tighter so video is main focus */
 .players-strip{
   display:flex;
   gap:8px;
@@ -225,16 +239,16 @@ button{cursor:pointer}
 }
 
 .player-tile{
-  min-width:124px;
-  max-width:148px;
+  min-width:118px;
+  max-width:132px;
   border-radius:14px;
-  padding:10px;
+  padding:8px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  gap:8px
+  gap:6px
 }
 
 .player-tile.turn{
@@ -249,7 +263,7 @@ button{cursor:pointer}
 
 .player-name{
   color:var(--tx);
-  font-size:14px;
+  font-size:13px;
   font-weight:700;
   line-height:1.2;
   overflow:hidden;
@@ -303,12 +317,11 @@ button{cursor:pointer}
   justify-content:flex-start;
   overflow:hidden;
   min-height:0;
-  padding-top:2px
+  padding-top:0
 }
 
-.main-stage > div:first-child{
-  margin-top:0!important;
-}
+.main-stage > div:first-child{margin-top:0!important}
+.main-stage h3{margin-bottom:4px!important}
 
 .status-bar{
   display:flex;
@@ -327,7 +340,8 @@ button{cursor:pointer}
   gap:3px;
   flex-shrink:0;
   overflow-x:auto;
-  padding-top:2px
+  padding-top:2px;
+  margin-top:-2px
 }
 
 .powers-list{display:flex;gap:3px}
@@ -336,8 +350,8 @@ button{cursor:pointer}
   perspective:1000px;
   display:inline-block;
   cursor:pointer;
-  width:132px;
-  height:184px
+  width:124px;
+  height:172px
 }
 
 .card-i{
@@ -366,21 +380,22 @@ button{cursor:pointer}
 .card-b{
   background:linear-gradient(145deg,#0e0e1e,#1a1a35);
   border:2.5px solid var(--ac);
-  box-shadow:0 8px 32px rgba(238,90,111,.25),0 0 60px rgba(238,90,111,.08)
+  box-shadow:0 8px 28px rgba(238,90,111,.22),0 0 50px rgba(238,90,111,.07)
 }
 
 .card-fr{
   transform:rotateY(180deg);
   background:linear-gradient(145deg,#fdf8ee,#f5eed8);
   border:2.5px solid #c8c0a8;
-  box-shadow:0 8px 32px rgba(0,0,0,.3)
+  box-shadow:0 8px 26px rgba(0,0,0,.28)
 }
 
 .ov{
   position:fixed;
   inset:0;
   z-index:9999;
-  background:rgba(6,6,14,.96);
+  background:rgba(6,6,14,.82);
+  backdrop-filter:blur(2px);
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -460,16 +475,63 @@ button{cursor:pointer}
 
 .pick-icon{font-size:40px;margin-bottom:10px}
 .pick-title{font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:6px}
-.pick-label{color:var(--mt);font-size:13px;margin-bottom:22px}
+.pick-label{color:var(--mt);font-size:13px;margin-bottom:18px}
 .pick-buttons{display:flex;flex-direction:column;gap:8px;width:240px}
 
-.timer-icon{font-size:48px;margin-bottom:10px}
-.timer-title{font-family:var(--fd);color:var(--gd);font-size:22px;margin-bottom:4px}
-.timer-desc{color:var(--mt);font-size:12px;margin-bottom:16px;text-align:center;max-width:280px}
-.timer-clock{font-family:var(--fd);font-size:48px;color:var(--ac);margin-bottom:16px}
-.timer-help{color:var(--mt);font-size:10px;margin-bottom:16px}
-.timer-players{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:300px}
-.timer-skip-btn{margin-top:16px;background:none;border:none;color:var(--mt);font-size:10px;cursor:pointer}
+.timer-icon{
+  font-size:42px;
+  margin-bottom:8px
+}
+
+.timer-title{
+  font-family:var(--fd);
+  color:var(--gd);
+  font-size:18px;
+  margin-bottom:4px
+}
+
+.timer-desc{
+  color:var(--mt);
+  font-size:12px;
+  margin-bottom:12px;
+  text-align:center;
+  max-width:280px
+}
+
+.timer-clock{
+  font-family:var(--fd);
+  font-size:42px;
+  color:var(--ac);
+  margin-bottom:12px
+}
+
+.timer-help{
+  color:var(--mt);
+  font-size:10px;
+  margin-bottom:12px
+}
+
+.timer-players{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:center;
+  max-width:300px
+}
+
+.timer-players .btn{
+  padding:6px 14px;
+  font-size:11px
+}
+
+.timer-skip-btn{
+  margin-top:12px;
+  background:none;
+  border:none;
+  color:var(--mt);
+  font-size:10px;
+  cursor:pointer
+}
 
 .you-drink{
   position:fixed;
@@ -506,9 +568,10 @@ button{cursor:pointer}
   display:inline-block
 }
 
+/* BIGGER PLAYER VIDEO */
 .vid-strip{
   display:flex;
-  gap:6px;
+  gap:8px;
   overflow-x:auto;
   padding:2px 0;
   flex:1;
@@ -516,34 +579,38 @@ button{cursor:pointer}
 }
 
 .vid-strip .vb{
-  width:84px;
-  height:62px;
+  width:118px;
+  height:86px;
   flex-shrink:0;
   background:#0a0a18;
-  border-radius:10px;
+  border-radius:12px;
   overflow:hidden;
   position:relative;
   border:1px solid rgba(255,255,255,.05)
 }
 
 .vid-strip .vb.turn-box{
-  border:1px solid rgba(238,90,111,.4);
-  box-shadow:0 0 18px rgba(238,90,111,.2)
+  border:1px solid rgba(238,90,111,.45);
+  box-shadow:0 0 22px rgba(238,90,111,.22)
 }
 
-.vid-strip .vb video{width:100%;height:100%;object-fit:cover}
+.vid-strip .vb video{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
 
 .vid-strip .vb .vl{
   position:absolute;
-  bottom:2px;
-  left:2px;
-  background:rgba(0,0,0,.62);
-  border-radius:3px;
-  padding:0 4px;
-  font-size:7px;
+  bottom:3px;
+  left:3px;
+  background:rgba(0,0,0,.66);
+  border-radius:4px;
+  padding:1px 5px;
+  font-size:8px;
   font-family:var(--fm);
   color:#fff;
-  max-width:78px;
+  max-width:108px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
@@ -551,10 +618,10 @@ button{cursor:pointer}
 
 .vid-strip .vb .vd{
   position:absolute;
-  top:2px;
-  right:2px;
-  width:6px;
-  height:6px;
+  top:4px;
+  right:4px;
+  width:7px;
+  height:7px;
   border-radius:50%;
   background:var(--ok)
 }
@@ -580,7 +647,9 @@ button{cursor:pointer}
   50%{box-shadow:0 0 80px rgba(238,90,111,.7)}
 }
 
-@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
 
 @keyframes glow{
   0%,100%{filter:drop-shadow(0 0 8px rgba(240,192,64,.3))}

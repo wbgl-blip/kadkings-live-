@@ -141,40 +141,41 @@ button{cursor:pointer}
 .wait-players-title{font-family:var(--fm);color:var(--ac);font-size:10px;letter-spacing:1px;margin-bottom:8px}
 .wait-note{margin-top:10px}
 
+/* GAME LAYOUT */
 .game-screen{
   height:100vh;
   height:100dvh;
   display:grid;
-  grid-template-rows:auto auto auto auto minmax(0,1fr);
+  grid-template-rows:auto auto auto auto minmax(0,1fr) auto;
   overflow:hidden;
   padding:8px 8px 10px;
   gap:6px
 }
 
-/* TOP VIDEO ZONE */
-.top-row{
+.hud-top-row{
   display:grid;
-  grid-template-columns:22px minmax(0,1fr) auto auto;
-  align-items:start;
+  grid-template-columns:20px 1fr auto auto;
+  align-items:center;
   gap:8px;
-  width:100%;
-  min-height:190px;
-  max-height:190px;
-  padding-bottom:6px;
-  border-bottom:1px solid rgba(255,255,255,.05)
+  flex-shrink:0
 }
 
 .top-crown{
   font-size:16px;
-  margin-top:10px;
-  align-self:start
+  align-self:center
+}
+
+.game-conn{
+  justify-self:end;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  padding:5px 8px;
+  min-height:34px
 }
 
 .vid-ctrl-mini{
-  flex-shrink:0;
   display:flex;
-  align-items:flex-start;
-  margin-top:6px
+  align-items:center
 }
 
 .cam-btn{
@@ -183,99 +184,6 @@ button{cursor:pointer}
   min-height:34px
 }
 
-.game-conn{
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.06);
-  padding:5px 8px;
-  flex-shrink:0;
-  margin-top:6px;
-  min-height:34px;
-  align-self:start
-}
-
-.vid-strip{
-  display:grid;
-  gap:8px;
-  width:100%;
-  height:100%;
-  min-width:0;
-  min-height:0;
-  overflow:hidden;
-  align-content:stretch
-}
-
-.vid-strip.one{
-  grid-template-columns:1fr;
-  grid-template-rows:1fr;
-}
-
-.vid-strip.two{
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr;
-}
-
-.vid-strip.two .vb{
-  min-height:170px;
-  max-height:170px;
-}
-
-.vid-strip.multi{
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr;
-}
-
-.vid-strip .vb{
-  width:100%;
-  height:100%;
-  min-width:0;
-  min-height:0;
-  background:#0a0a18;
-  border-radius:16px;
-  overflow:hidden;
-  position:relative;
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:0 0 0 rgba(0,0,0,0)
-}
-
-.vid-strip .vb.turn-box{
-  border:1px solid rgba(238,90,111,.45);
-  box-shadow:0 0 22px rgba(238,90,111,.22)
-}
-
-.vid-strip .vb video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center
-}
-
-.vid-strip .vb .vl{
-  position:absolute;
-  bottom:6px;
-  left:6px;
-  background:rgba(0,0,0,.68);
-  border-radius:6px;
-  padding:3px 7px;
-  font-size:10px;
-  font-family:var(--fm);
-  color:#fff;
-  max-width:80%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap
-}
-
-.vid-strip .vb .vd{
-  position:absolute;
-  top:8px;
-  right:8px;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--ok)
-}
-
-/* HUD ROWS */
 .info-row{
   display:flex;
   align-items:center;
@@ -284,7 +192,11 @@ button{cursor:pointer}
   overflow-x:auto
 }
 
-.invite-mini{padding:2px 6px;font-size:7px;flex-shrink:0}
+.invite-mini{
+  padding:5px 10px;
+  font-size:10px;
+  min-height:34px
+}
 
 .chip{
   display:inline-flex;
@@ -337,12 +249,12 @@ button{cursor:pointer}
   overflow-x:auto;
   flex-shrink:0;
   padding:2px 0 0;
-  max-height:70px
+  max-height:66px
 }
 
 .player-tile{
-  min-width:112px;
-  max-width:126px;
+  min-width:108px;
+  max-width:122px;
   border-radius:14px;
   padding:6px 7px;
   background:rgba(255,255,255,.04);
@@ -411,16 +323,33 @@ button{cursor:pointer}
   color:var(--gd)
 }
 
-/* DECK ZONE */
+/* ARENA */
+.arena-wrap{
+  position:relative;
+  min-height:0;
+  overflow:hidden;
+  border-radius:20px;
+}
+
+#vid-strip{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* CENTER GAME STAGE */
 .main-stage{
+  position:relative;
+  z-index:2;
+  height:100%;
   min-height:0;
   overflow:auto;
-  position:relative;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
-  padding-top:0
+  justify-content:center;
+  padding:10px 6px 0;
 }
 
 .main-stage::before{
@@ -440,6 +369,108 @@ button{cursor:pointer}
   align-items:center;
 }
 .main-stage h3{margin-bottom:4px!important}
+
+/* VIDEO TILES AROUND CARD */
+.vid-strip .vb{
+  position:absolute;
+  width:118px;
+  height:118px;
+  background:#0a0a18;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:0 0 0 rgba(0,0,0,0);
+  pointer-events:auto
+}
+
+.vid-strip .vb.turn-box{
+  border:1px solid rgba(238,90,111,.45);
+  box-shadow:0 0 22px rgba(238,90,111,.22)
+}
+
+.vid-strip .vb video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  background:#000
+}
+
+.vid-strip .vb .vl{
+  position:absolute;
+  bottom:6px;
+  left:6px;
+  background:rgba(0,0,0,.68);
+  border-radius:6px;
+  padding:3px 7px;
+  font-size:10px;
+  font-family:var(--fm);
+  color:#fff;
+  max-width:80%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+
+.vid-strip .vb .vd{
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--ok)
+}
+
+/* 1 PLAYER */
+.vid-strip.one .vb:nth-child(1){
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:142px;
+  height:142px;
+}
+
+/* 2 PLAYERS */
+.vid-strip.two .vb:nth-child(1){
+  top:12px;
+  left:0;
+  width:132px;
+  height:132px;
+}
+
+.vid-strip.two .vb:nth-child(2){
+  top:12px;
+  right:0;
+  width:132px;
+  height:132px;
+}
+
+/* 3 PLAYERS */
+.vid-strip.multi .vb:nth-child(1){
+  top:12px;
+  left:0;
+}
+
+.vid-strip.multi .vb:nth-child(2){
+  top:12px;
+  right:0;
+}
+
+.vid-strip.multi .vb:nth-child(3){
+  bottom:18px;
+  left:0;
+}
+
+/* 4 PLAYERS */
+.vid-strip.multi .vb:nth-child(4){
+  bottom:18px;
+  right:0;
+}
+
+.vid-strip .vb:nth-child(n+5){
+  display:none;
+}
 
 .status-bar{
   display:flex;
@@ -758,10 +789,13 @@ button{cursor:pointer}
 }
 
 @media (max-width:420px){
-  .top-row{
-    min-height:176px;
-    max-height:176px;
-    grid-template-columns:18px minmax(0,1fr) auto auto;
+  .game-screen{
+    padding:8px 8px 8px;
+    gap:5px
+  }
+
+  .hud-top-row{
+    grid-template-columns:18px 1fr auto auto;
     gap:6px
   }
 
@@ -775,31 +809,32 @@ button{cursor:pointer}
     padding:4px 9px
   }
 
-  .vid-strip.two .vb{
-    min-height:156px;
-    max-height:156px;
-  }
-
   .players-strip{
-    max-height:66px;
+    max-height:64px;
   }
 
   .player-tile{
-    min-width:108px;
-    max-width:122px;
-    padding:6px 7px;
+    min-width:104px;
+    max-width:118px;
   }
 
-  .player-name{
-    font-size:12px;
+  .vid-strip.two .vb:nth-child(1),
+  .vid-strip.two .vb:nth-child(2){
+    width:122px;
+    height:122px;
   }
 
-  .vid-strip .vb .vl{
-    font-size:9px
+  .vid-strip.multi .vb{
+    width:108px;
+    height:108px;
   }
 
   .card-w{
     width:132px;
     height:182px;
   }
-}
+
+  .vid-strip .vb .vl{
+    font-size:9px
+  }
+  }
